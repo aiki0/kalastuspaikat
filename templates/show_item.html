@@ -9,7 +9,8 @@
     <h1>Kalastuspaikka</h1>
     {% if session.username == item.username %}
     <p>
-        <a href="/edit_item/{{ item.id }}">Muokkaa ilmoitusta</a>
+        <a href="/edit_item/{{ item.id }}">Muokkaa</a>
+        <a href="/remove_item/{{ item.id }}">Poista</a>
     </p>
     {% endif %}
     <h1>{{ item.title }}</h1>

@@ -47,6 +47,23 @@ def edit_item(item_id):
     item = items.get_item(item_id)
     return render_template("edit_item.html", item=item)
 
+@app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
+def remove_item(item_id):
+    item = items.get_item(item_id)
+    if not item:
+        abort(404)
+    if item["username"] != session.get("username"):
+        return redirect("/")
+    else:
+        if request.method == "GET":
+            return render_template("remove_item.html", item=item)
+        if request.method == "POST":
+            if "remove" in request.form:
+                items.remove_item(item_id)
+                return redirect("/")
+            else:
+                return redirect("/item/" + str(item_id)) 
+
 @app.route("/register")
 def register():
     return render_template("register.html")
