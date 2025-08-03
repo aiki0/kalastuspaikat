@@ -6,7 +6,15 @@
 </head>
 
 <body>
+    <h1>Kalastuspaikka</h1>
+    {% if session.username == item.username %}
+    <p>
+        <a href="/edit_item/{{ item.id }}">Muokkaa ilmoitusta</a>
+    </p>
+    {% endif %}
     <h1>{{ item.title }}</h1>
+
+
     <p>{{ item.description }}</p>
     <p>Ilmoittaja: {{ item.username }}</p>
     <p>
