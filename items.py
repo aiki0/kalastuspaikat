@@ -26,3 +26,19 @@ def update_item(item_id, title, description):
 def remove_item(item_id):
     sql = "DELETE FROM items WHERE id = ?"
     db.execute(sql, [item_id])
+
+def find_items(query, rating=None):
+    sql = """SELECT items.id, items.title, items.description, users.username
+    FROM items, users
+    WHERE items.user_id = users.id
+    AND (items.title LIKE ? OR items.description LIKE ?)"""
+    
+    params = ['%' + query + '%', '%' + query + '%']
+    
+    if rating is not None:
+        sql += " AND items.rating = ?"
+        params.append(rating)
+    
+    sql += " ORDER BY items.id DESC"
+    
+    return db.query(sql, params)

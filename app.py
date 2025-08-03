@@ -50,8 +50,6 @@ def edit_item(item_id):
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
 def remove_item(item_id):
     item = items.get_item(item_id)
-    if not item:
-        abort(404)
     if item["username"] != session.get("username"):
         return redirect("/")
     else:
@@ -63,6 +61,13 @@ def remove_item(item_id):
                 return redirect("/")
             else:
                 return redirect("/item/" + str(item_id)) 
+            
+@app.route("/find_items", methods=["GET", "POST"])
+def finditems():
+    query = request.args.get("query") or ""
+    all_items = items.find_items(query)
+    return render_template("find_items.html", items=all_items, query=query)
+            
 
 @app.route("/register")
 def register():
