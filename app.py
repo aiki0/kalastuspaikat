@@ -8,6 +8,26 @@ import config
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/new_item")
+def new_item():
+    return render_template("new_item.html")
+
+@app.route("/create_item", methods=["POST"])
+def create_item():
+    title = request.form["title"]
+    description = request.form["description"]
+    username = session["username"]
+
+    sql = "SELECT id FROM users WHERE username = ?"
+    user_id = db.query(sql, [username])[0][0]
+
+    sql = "INSERT INTO items (title, description, user_id) VALUES (?, ?, ?)"
+    db.execute(sql, [title, description, user_id])
+    return redirect("/")
 
 @app.route("/register")
 def register():
@@ -30,9 +50,6 @@ def create():
 
     return "Tunnus luotu"
 
-@app.route("/")
-def index():
-    return render_template("index.html")
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
