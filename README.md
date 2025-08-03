@@ -6,7 +6,7 @@
 * Käyttäjä pystyy lisäämään luokat ja mahdollisesti kuvia paikkoihin.
 * Käyttäjä näkee sovellukseen lisätyt kalapaikat.
 * Käyttäjä pystyy etsimään paikkoja hakusanoilla (esim kalalaji, vesistö tms..)
-* Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän kirjoittamat viestit.
+* Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän lisäämät kohteet.
 * Käyttäjä pystyy valitsemaan paikkaan yhden tai useamman luokittelun (esim. vesistön tyyppi, kalalajit, luvallinen/ei).
 * Käyttäjä pystyy luomaan uusia paikkoja.
 
