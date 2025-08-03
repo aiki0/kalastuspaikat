@@ -4,6 +4,7 @@ from flask import redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
+import items
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -22,11 +23,7 @@ def create_item():
     description = request.form["description"]
     username = session["username"]
 
-    sql = "SELECT id FROM users WHERE username = ?"
-    user_id = db.query(sql, [username])[0][0]
-
-    sql = "INSERT INTO items (title, description, user_id) VALUES (?, ?, ?)"
-    db.execute(sql, [title, description, user_id])
+    items.add_item(title, description, username)
     return redirect("/")
 
 @app.route("/register")
