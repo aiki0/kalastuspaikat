@@ -17,6 +17,8 @@ def index():
 @app.route("/item/<int:item_id>")
 def show_item(item_id):
     item = items.get_item(item_id)
+    if item is None:
+        abort(404)
     return render_template("show_item.html", item=item)
 
 @app.route("/new_item")
@@ -36,6 +38,8 @@ def create_item():
 def update_item():
     item_id = request.form["item_id"]
     item = items.get_item(item_id)
+    if item is None:
+        abort(404)
     if item["username"] != session["username"]:
         abort(403)
     title = request.form["title"]
@@ -48,6 +52,8 @@ def update_item():
 @app.route("/edit_item/<int:item_id>")
 def edit_item(item_id):
     item = items.get_item(item_id)
+    if item is None:
+        abort(404)
     if item["username"] != session["username"]:
         return redirect("/")
     return render_template("edit_item.html", item=item)
@@ -55,6 +61,8 @@ def edit_item(item_id):
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
 def remove_item(item_id):
     item = items.get_item(item_id)
+    if item is None:
+        abort(404)
     if item["username"] != session["username"]:
         return redirect("/")
     else:
