@@ -12,15 +12,25 @@
   <p>
     Olet kirjautunut nimellä {{ session.username }}
   </p>
-  {% endif %}
   <p>
     <a href="/logout">Kirjaudu ulos</a>
-    <a href="/register">Rekisteröidy</a>
-    <a href="/login">Kirjaudu sisään</a>
   </p>
 
   <p>
     <a href="/new_item">Uusi ilmoitus</a>
+  </p>
+  {% else %}
+  <p>
+    Et ole kirjautunut sisään.
+    <a href="/register">Rekisteröidy</a>
+    <a href="/login">Kirjaudu sisään</a>
+  </p>
+  {% endif %}
+  <p>
+
+  </p>
+
+  <p>
     <a href="/find_items">Etsi ilmoituksia</a>
   </p>
   <h2>Ilmoitukset</h2>
