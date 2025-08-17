@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
 import items
+import users
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -17,6 +18,16 @@ def require_login():
 def index():
     all_items = items.get_items()
     return render_template("index.html", items=all_items)
+
+@app.route("/user/<username>")
+def show_user(username):
+    user = users.get_user(username)
+    if user is None:
+        abort(404) 
+    user_items = users.get_items(username)
+
+    return render_template("show_user.html", user=user, items=user_items)
+
 
 @app.route("/item/<int:item_id>")
 def show_item(item_id):

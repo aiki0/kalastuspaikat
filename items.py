@@ -43,3 +43,8 @@ def find_items(query, rating=None):
     sql += " ORDER BY items.id DESC"
     
     return db.query(sql, params)
+
+def get_user(username):
+    sql = "SELECT id FROM users WHERE username = ?"
+    result = db.query(sql, [username])
+    return result[0][0] if result else None
