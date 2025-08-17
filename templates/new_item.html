@@ -8,13 +8,16 @@
 <body>
     <h1>Uusi ilmoitus</h1>
   <form action="/create_item" method="post">
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
     <p>
       Otsikko: <br />
-      <input type="text" name="title" />
+      <input type="text" name="title" maxlength="45" />
     </p>
     <p>
       Kuvaus: <br />
-      <textarea rows="8" cols="40" name="description"></textarea>
+      <textarea rows="8" cols="40" name="description" maxlength="1000"></textarea>
     </p>
     <input type="submit" value="Luo Ilmoitus" />
   </form>

@@ -8,13 +8,16 @@
 <body>
     <h1>Ilmoituksen muokkaus</h1>
   <form action="/update_item" method="post">
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
     <p>
       Otsikko: <br />
-      <input type="text" name="title" value="{{ item.title }}" />
+      <input type="text" name="title" maxlength="45" value="{{ item.title }}" />
     </p>
     <p>
       Kuvaus: <br />
-      <textarea rows="8" cols="40" name="description">{{ item.description }}</textarea>
+      <textarea rows="8" cols="40" name="description" maxlength="1000">{{ item.description }}</textarea>
     </p>
     <input type="submit" value="Päivitä ilmoitusta" />
     <input type="hidden" name="item_id" value="{{ item.id }}" />

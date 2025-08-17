@@ -36,7 +36,13 @@ def new_item():
 def create_item():
     require_login()
     title = request.form["title"]
+    if len(title) < 3:
+        return render_template("new_item.html", error="Otsikon tulee olla vähintään 3 merkkiä pitkä")
+    if len(title) > 45:
+        return render_template("new_item.html", error="Otsikon tulee olla enintään 45 merkkiä pitkä")
     description = request.form["description"]
+    if len(description) > 1000:
+        return render_template("new_item.html", error="Kuvauksen tulee olla enintään 1000 merkkiä pitkä")
     username = session["username"]
 
     items.add_item(title, description, username)
@@ -52,6 +58,11 @@ def update_item():
     if item["username"] != session["username"]:
         abort(403)
     title = request.form["title"]
+    if len(title) < 3:
+        abort(400, "Otsikon tulee olla vähintään 3 merkkiä pitkä")
+    if len(title) > 45:
+        abort(400, "Otsikon tulee olla enintään 45 merkkiä pitkä")
+
     description = request.form["description"]
 
     items.update_item(item_id, title, description)
