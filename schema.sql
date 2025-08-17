@@ -10,3 +10,10 @@ CREATE TABLE items (
     description TEXT,
     user_id INTEGER REFERENCES users(id)
 );
+
+CREATE TABLE item_classes (
+    id INTEGER PRIMARY KEY,
+    item_id INTEGER REFERENCES items(id),
+    title TEXT,
+    value TEXT
+);

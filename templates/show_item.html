@@ -18,7 +18,16 @@
 
     <p>{{ item.description }}</p>
     <p>
-        <p>Ilmoittaja: <a href="/user/{{ item.username }}">{{ item.username }}</a></p>
+        <p>Ilmoittaja: <a href="/user/{{ item.username }}">{{ item.username }}</a>
+        </p>
+    {% if classes %}
+        <p>INFO
+            {% for class in classes%}
+            <li>{{ class.title}}: {{ class.value }}</li>
+            {% endfor %}
+        </p>
+    {% endif %}
+    </p>
 
     <p>
         <a href="/">Takaisin ilmoituksiin</a>

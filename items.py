@@ -1,10 +1,18 @@
 import db
 
-def add_item(title, description, username):
+def add_item(title, description, username, classes):
     sql = "SELECT id FROM users WHERE username = ?"
     user_id = db.query(sql, [username])[0][0]
     sql = "INSERT INTO items (title, description, user_id) VALUES (?, ?, ?)"
     db.execute(sql, [title, description, user_id])
+
+    item_id = db.last_insert_id()
+    sql = "INSERT INTO item_classes (item_id, title, value) VALUES (?, ?, ?)"
+    for title, value in classes:
+        db.execute(sql, [item_id, title, value])
+def get_classes(item_id):
+    sql = "SELECT title, value FROM item_classes WHERE item_id = ?"
+    return db.query(sql, [item_id])
 
 def get_items():
     sql = "SELECT id, title from items order by id desc"
@@ -43,8 +51,3 @@ def find_items(query, rating=None):
     sql += " ORDER BY items.id DESC"
     
     return db.query(sql, params)
-
-def get_user(username):
-    sql = "SELECT id FROM users WHERE username = ?"
-    result = db.query(sql, [username])
-    return result[0][0] if result else None

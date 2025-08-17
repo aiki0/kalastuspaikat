@@ -34,7 +34,8 @@ def show_item(item_id):
     item = items.get_item(item_id)
     if item is None:
         abort(404)
-    return render_template("show_item.html", item=item)
+    classes = items.get_classes(item_id)
+    return render_template("show_item.html", item=item, classes=classes)
 
 @app.route("/new_item")
 def new_item():
@@ -55,8 +56,14 @@ def create_item():
     if len(description) > 1000:
         return render_template("new_item.html", error="Kuvauksen tulee olla enintään 1000 merkkiä pitkä")
     username = session["username"]
-
-    items.add_item(title, description, username)
+    classes = []
+    watertype = request.form.get("watertype")
+    if watertype:
+        classes.append(("Vesistö", watertype))
+    region = request.form.get("region")
+    if region:
+        classes.append(("Maakunta", region))
+    items.add_item(title, description, username, classes)
     return redirect("/")
 
 @app.route("/update_item", methods=["POST"])
