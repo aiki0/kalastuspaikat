@@ -33,7 +33,7 @@ def find_items(query, rating=None):
     WHERE items.user_id = users.id
     AND (items.title LIKE ? OR items.description LIKE ?)"""
     
-    params = ['%' + query + '%', '%' + query + '%']
+    params = ["%" + query + "%", "%" + query + "%"]
     
     if rating is not None:
         sql += " AND items.rating = ?"
