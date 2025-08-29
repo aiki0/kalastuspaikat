@@ -81,8 +81,15 @@ def update_item():
         abort(400, "Otsikon tulee olla enintään 45 merkkiä pitkä")
 
     description = request.form["description"]
+    if len(description) > 1000:
+        abort(400, "Kuvauksen tulee olla enintään 1000 merkkiä pitkä")
 
-    items.update_item(item_id, title, description)
+    classes = []
+    for entry in request.form.getlist("classes"):
+        if entry:
+            key, value = entry.split(":", 1)
+            classes.append((key.strip(), value.strip()))
+    items.update_item(item_id, title, description, classes)
     return redirect("/item/" + item_id)
 
 
@@ -94,7 +101,13 @@ def edit_item(item_id):
         abort(404)
     if item["username"] != session["username"]:
         return redirect("/")
-    return render_template("edit_item.html", item=item)
+    all_classes = items.get_all_classes()
+    classes = {}
+    for my_class in all_classes:
+        classes[my_class] = ""
+    for entry in items.get_classes(item_id):
+        classes[entry["title"]] = entry["value"]
+    return render_template("edit_item.html", item=item, classes=classes, all_classes=all_classes)
 
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
 def remove_item(item_id):
