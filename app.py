@@ -41,7 +41,8 @@ def new_item():
     if "username" not in session:
         return redirect("/login")
     require_login()
-    return render_template("new_item.html")
+    classes = items.get_all_classes()
+    return render_template("new_item.html", classes=classes)
 
 @app.route("/create_item", methods=["POST"])
 def create_item():
@@ -55,13 +56,12 @@ def create_item():
     if len(description) > 1000:
         return render_template("new_item.html", error="Kuvauksen tulee olla enintään 1000 merkkiä pitkä")
     username = session["username"]
+    
     classes = []
-    watertype = request.form.get("watertype")
-    if watertype:
-        classes.append(("Vesistö", watertype))
-    region = request.form.get("region")
-    if region:
-        classes.append(("Maakunta", region))
+    for entry in request.form.getlist("classes"):
+        if entry:
+            key, value = entry.split(":", 1)
+            classes.append((key.strip(), value.strip()))
     items.add_item(title, description, username, classes)
     return redirect("/")
 
