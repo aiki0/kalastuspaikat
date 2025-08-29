@@ -57,11 +57,18 @@ def create_item():
         return render_template("new_item.html", error="Kuvauksen tulee olla enintään 1000 merkkiä pitkä")
     username = session["username"]
     
+    all_classes = items.get_all_classes()
+
+
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
-            key, value = entry.split(":", 1)
-            classes.append((key.strip(), value.strip()))
+            class_title, class_value = entry.split(":")
+            if class_title not in all_classes:
+                abort(403)
+            if class_value not in all_classes[class_title]:
+                abort(403)
+            classes.append((class_title, class_value))
     items.add_item(title, description, username, classes)
     return redirect("/")
 
@@ -102,11 +109,15 @@ def edit_item(item_id):
     if item["username"] != session["username"]:
         return redirect("/")
     all_classes = items.get_all_classes()
-    classes = {}
-    for my_class in all_classes:
-        classes[my_class] = ""
-    for entry in items.get_classes(item_id):
-        classes[entry["title"]] = entry["value"]
+    classes = []
+    for entry in request.form.getlist("classes"):
+        if entry:
+            class_title, class_value = entry.split(":")
+            if class_title not in all_classes:
+                abort(403)
+            if class_value not in all_classes[class_title]:
+                abort(403)
+            classes.append((class_title, class_value))
     return render_template("edit_item.html", item=item, classes=classes, all_classes=all_classes)
 
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
