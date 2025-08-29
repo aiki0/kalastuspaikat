@@ -23,3 +23,10 @@ CREATE TABLE classes (
     title TEXT,
     value TEXT
 );
+
+CREATE TABLE comments (
+    id INTEGER PRIMARY KEY,
+    item_id INTEGER REFERENCES items(id),
+    user_id INTEGER REFERENCES users(id),
+    comment TEXT
+);

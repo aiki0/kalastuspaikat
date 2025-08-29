@@ -26,9 +26,19 @@
             <li>{{ class.title}}: {{ class.value }}</li>
             {% endfor %}
         </p>
-    {% endif %}
     </p>
-
+    {% endif %}
+    <h2>Kommentit</h2>
+    {% for value in comments %}
+    <li>{{ value.comment }}, <a href="/user/{{ value.username}}">{{ value.username }}</a></li>
+    {% endfor %}
+    <h2>Uusi kommentti</h2>
+    <form action="/create_comment" method="post">
+        Kommentti:<br>
+        <textarea name="comment" maxlength="500" rows="5" cols="50"></textarea><br>
+        <input type="hidden" name="item_id" value="{{ item.id }}" />
+        <input type="submit" value="Lisää kommentti" />
+    </form>
     <p>
         <a href="/">Takaisin ilmoituksiin</a>
     </p>

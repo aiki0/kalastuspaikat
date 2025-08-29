@@ -17,6 +17,7 @@ def get_items(username):
              WHERE users.username = ?
              ORDER BY items.id DESC"""
     return db.query(sql, [username])
+
 def create_user(username, password):
     password_hash = generate_password_hash(password)
     sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
