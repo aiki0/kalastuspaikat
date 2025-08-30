@@ -1,5 +1,6 @@
 import sqlite3
 from flask import Flask
+import math
 from flask import abort, redirect, render_template, request, session, make_response, flash
 import config
 import items
@@ -20,16 +21,27 @@ def check_csrf():
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
-@app.route("/")
-def index():
-    all_items = items.get_items()
-    return render_template("index.html", items=all_items)
+@app.route("/<int:page>")
+@app.route("/", defaults={"page": 1})
+def index(page):
+    page_size = 10
+    item_count = items.item_count()
+    page_count = math.ceil(item_count / page_size)
+    page_count = max(page_count, 1)
+
+    if page < 1:
+        return redirect("/1")
+    if page > page_count:
+        return redirect(f"/{page_count}")
+
+    all_items = items.get_items(page, page_size)
+    return render_template("index.html", page=page, page_count=page_count, items=all_items)
 
 @app.route("/user/<username>")
 def show_user(username):
     user = users.get_user(username)
     if user is None:
-        abort(404) 
+        abort(404)
     user_items = users.get_items(username)
     return render_template("show_user.html", user=user, items=user_items)
 
@@ -40,15 +52,37 @@ def show_lines(content):
     return markupsafe.Markup(content)
 
 
-@app.route("/item/<int:item_id>")
-def show_item(item_id):
+@app.route("/item/<int:item_id>/<int:page>")
+@app.route("/item/<int:item_id>", defaults={"page": 1})
+def show_item(item_id, page):
     item = items.get_item(item_id)
     if item is None:
         abort(404)
+
     classes = items.get_classes(item_id)
-    comments = items.get_comments(item_id)
-    images = items.get_images(item_id) 
-    return render_template("show_item.html", item=item, classes=classes, comments=comments, images=images)
+    images = items.get_images(item_id)
+
+    page_size = 6
+    comment_count = items.comment_count(item_id)
+    page_count = math.ceil(comment_count / page_size)
+    page_count = max(page_count, 1)
+
+    if page < 1:
+        return redirect("/item/"+ str(item_id) + "/1")
+    if page > page_count:
+        return redirect("/item/"+ str(item_id) + "/" + str(page_count))
+
+    comments = items.get_comments(item_id, page, page_size)
+
+    return render_template(
+        "show_item.html",
+        item=item,
+        classes=classes,
+        comments=comments,
+        images=images,
+        page=page,
+        page_count=page_count,
+    )
 
 @app.route("/image/<int:image_id>")
 def show_image(image_id):

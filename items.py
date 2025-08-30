@@ -27,20 +27,39 @@ def add_comment(comment, user_id, item_id):
              VALUES (?, ?, ?)"""
     db.execute(sql, [item_id, user_id, comment])
 
-def get_comments(item_id):
-    sql = """SELECT comments.comment, users.id user_id, users.username
-    FROM comments, users
-    WHERE comments.item_id = ? AND comments.user_id = users.id
-    ORDER BY comments.id DESC"""
-    return db.query(sql, [item_id])
+def get_comments(item_id, page, page_size):
+    sql = """
+        SELECT comments.comment, users.id AS user_id, users.username
+        FROM comments
+        JOIN users ON comments.user_id = users.id
+        WHERE comments.item_id = ?
+        ORDER BY comments.id DESC
+        LIMIT ? OFFSET ?"""
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [item_id, limit, offset])
     
 def get_classes(item_id):
     sql = "SELECT title, value FROM item_classes WHERE item_id = ?"
     return db.query(sql, [item_id])
 
-def get_items():
-    sql = "SELECT id, title from items order by id desc"
-    return db.query(sql)
+def comment_count(item_id):
+    sql = "SELECT COUNT(*) AS count FROM comments WHERE item_id = ?"
+    return db.query(sql, [item_id])[0]["count"]
+
+def get_items(page, page_size):
+    sql = """SELECT id, title
+             FROM items
+             ORDER BY id DESC
+             LIMIT ? OFFSET ?"""
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [limit, offset])
+
+def item_count():
+    sql = "SELECT COUNT(*) AS count FROM items"
+    result = db.query(sql)
+    return result[0]["count"] if result else 0
 
 def get_images(item_id):
     sql = "SELECT id FROM images WHERE item_id = ?"

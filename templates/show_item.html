@@ -27,8 +27,16 @@
     <img src="/image/{{ image.id }}" alt="Kuva ilmoituksesta" width="150" />
     {% endfor %}
     {% if comments %}
-    <h3>Kommentit</h3>
-    {%endif%}
+    <h3>Kommentti sivu: 
+        {% if page > 1 %}
+        <a href="{{ url_for('show_item', item_id=item.id, page=page-1) }}">&lt;</a>
+        {% endif %}
+        {{ page }} / {{ page_count }}
+        {% if page < page_count %}
+        <a href="{{ url_for('show_item', item_id=item.id, page=page+1) }}">&gt;</a>
+        {% endif %}
+    </h3>
+    {% endif %}
     {% for value in comments %}
     
     <li><a href="/user/{{ value.username}}">{{ value.username }}</a>: {{ value.comment }}</li>
@@ -42,5 +50,7 @@
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
         <input type="submit" value="Lisää kommentti" />
     </form>
+
+
     
 {% endblock %}

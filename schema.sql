@@ -36,3 +36,6 @@ CREATE TABLE images (
     item_id INTEGER REFERENCES items(id),
     image BLOB
 );
+
+
+CREATE INDEX idx_item_comments ON comments (item_id);
