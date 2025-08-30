@@ -5,9 +5,6 @@
 {% block content %}
 <h2>Uusi ilmoitus</h2>
 <form action="/create_item" method="post">
-  {% if error %}
-  <p style="color: red;">{{ error }}</p>
-  {% endif %}
   <p>
     <label for="title">Otsikko:</label><br>
     <input type="text" name="title" id="title" maxlength="45" required />

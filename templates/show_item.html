@@ -30,11 +30,14 @@
     <h3>Kommentit</h3>
     {%endif%}
     {% for value in comments %}
+    
     <li><a href="/user/{{ value.username}}">{{ value.username }}</a>: {{ value.comment }}</li>
+    <br>
+    
     {% endfor %}
     <form action="/create_comment" method="post">
-        <label for="comment">Kommentoi:</label><br>
-        <textarea name="comment" id="comment" maxlength="500" rows="3" cols="30" placeholder="Lisää kommentti:"></textarea><br>
+        <label for="comment">Kommentoi: max 100 merkkiä</label><br>
+        <textarea name="comment" id="comment" maxlength="100" rows="3" cols="30" required placeholder="Lisää kommentti:"></textarea><br>
         <input type="hidden" name="item_id" value="{{ item.id }}" />
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
         <input type="submit" value="Lisää kommentti" />

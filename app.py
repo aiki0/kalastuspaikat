@@ -77,10 +77,8 @@ def create_comment():
     check_csrf()
 
     comment = request.form["comment"]
-    if len(comment) < 3:
-        return render_template("new_item.html", error="Kommentin tulee olla vähintään 3 merkkiä pitkä")
-    if len(comment) > 500:
-        return render_template("new_item.html", error="Kommentin tulee olla enintään 500 merkkiä pitkä")
+    if not comment or len(comment) > 101:
+        abort(403)
 
     item_id = request.form["item_id"]
     item = items.get_item(item_id)
