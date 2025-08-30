@@ -21,6 +21,30 @@ body {
     padding: 20px;
 }
 
+.item-description {
+  white-space: normal;
+  margin: 0 auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 30%;
+  text-align: center;
+}
+
+input[name="title"] {
+  width: 25%;
+  padding: 5px;
+}
+
+textarea[name="description"] {
+  width: 30%;
+  height: 160px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: center;
+  padding: 5px;
+}
+
+
 .bottom {
     background-color: #222;
     color: white;
@@ -29,7 +53,7 @@ body {
 }
 
 a {
-    color: #c5e019;
+    color: #ebff66;
     text-decoration: none;
 }
 
