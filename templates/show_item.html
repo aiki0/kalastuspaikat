@@ -19,17 +19,13 @@
         {% for class in classes%}
         <li>{{ class.title}}: {{ class.value }}</li>
         {% endfor %}
-    {% endif %}
-    {% if item %}
-        
+    {% endif %}  
         
     <li>Ilmoittaja: <a href="/user/{{ item.username }}">{{ item.username }}</a></li> 
     </p>
     {% for image in images %}
     <img src="/image/{{ image.id }}" alt="Kuva ilmoituksesta" width="150" />
     {% endfor %}
-
-    {% endif %}
     {% if comments %}
     <h3>Kommentit</h3>
     {%endif%}
@@ -40,6 +36,7 @@
         <label for="comment">Kommentoi:</label><br>
         <textarea name="comment" id="comment" maxlength="500" rows="3" cols="30" placeholder="Lisää kommentti:"></textarea><br>
         <input type="hidden" name="item_id" value="{{ item.id }}" />
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
         <input type="submit" value="Lisää kommentti" />
     </form>
     

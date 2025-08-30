@@ -15,6 +15,7 @@
     {% endfor %}
     <br />
     <input type="hidden" name="item_id" value="{{ item.id }}" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Poista valitut kuvat" />
 </form>
 <form action="/add_image" method="post" enctype="multipart/form-data">
@@ -23,6 +24,7 @@
         <input type="file" id="image" name="image" accept=".png" />
 
     <input type="hidden" name="item_id" value="{{ item.id }}" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Lähetä" />
     </p>
     </form>

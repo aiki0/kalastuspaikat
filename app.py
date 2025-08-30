@@ -5,12 +5,19 @@ import config
 import items
 import users
 import markupsafe
+import secrets
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
 def require_login():
     if "username" not in session:
+        abort(403)
+
+def check_csrf():
+    if "csrf_token" not in request.form:
+        abort(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
 @app.route("/")
@@ -67,6 +74,7 @@ def new_item():
 @app.route("/create_comment", methods=["POST"])
 def create_comment():
     require_login()
+    check_csrf()
 
     comment = request.form["comment"]
     if len(comment) < 3:
@@ -90,6 +98,7 @@ def create_comment():
 @app.route("/create_item", methods=["POST"])
 def create_item():
     require_login()
+    check_csrf()
     title = request.form["title"]
     description = request.form["description"]
     if not title or len(title) > 46:
@@ -113,6 +122,7 @@ def create_item():
 @app.route("/update_item", methods=["POST"])
 def update_item():
     require_login()
+    check_csrf()
     item_id = request.form["item_id"]
     item = items.get_item(item_id)
     if item is None:
@@ -168,6 +178,7 @@ def edit_images(item_id):
 @app.route("/add_image", methods=["POST"])
 def add_image():
     require_login()
+    check_csrf()
     item_id = request.form["item_id"]
     item = items.get_item(item_id)
     if item is None:
@@ -189,6 +200,7 @@ def add_image():
 @app.route("/remove_images", methods=["POST"])
 def remove_images():
     require_login()
+    check_csrf()
     item_id = request.form["item_id"]
     item = items.get_item(item_id)
     if item is None:
@@ -213,6 +225,7 @@ def remove_item(item_id):
         if request.method == "GET":
             return render_template("remove_item.html", item=item)
         if request.method == "POST":
+            check_csrf()
             if "remove" in request.form:
                 items.remove_item(item_id)
                 return redirect("/")
@@ -231,11 +244,11 @@ def register():
     return render_template("register.html")
 
 @app.route("/create", methods=["POST"])
+
 def create():
     username = request.form.get("username", "").strip()
     password1 = request.form.get("password1", "").strip()
     password2 = request.form.get("password2", "").strip()
-
     if not username:
         flash("VIRHE: Käyttäjätunnus ei voi olla tyhjä")
         return render_template("register.html", username=username)
@@ -268,6 +281,7 @@ def login():
         if user_id:
             session["user_id"] = user_id
             session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             flash("VIRHE: väärä tunnus tai salasana")

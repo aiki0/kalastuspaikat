@@ -17,6 +17,7 @@
     <label for="password2">Salasana uudestaan:</label><br />
     <input type="password" name="password2" id="password2" required />
   </p>
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <input type="submit" value="Luo tunnus" />
 </form>
 
