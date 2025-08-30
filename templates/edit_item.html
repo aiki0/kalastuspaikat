@@ -9,18 +9,18 @@
   <p style="color: red;">{{ error }}</p>
   {% endif %}
   <p>
-    Otsikko: <br />
-    <input type="text" name="title" maxlength="45" value="{{ item.title }}" required />
+    <label for="title">Otsikko:</label><br />
+    <input type="text" name="title" id="title" maxlength="45" value="{{ item.title }}" required />
   </p>
   <p>
-    Kuvaus: <br />
-    <textarea rows="8" cols="40" name="description" maxlength="1000" required>{{ item.description }}</textarea>
+    <label for="description">Kuvaus:</label><br />
+    <textarea id="description" rows="8" cols="40" name="description" maxlength="1000" required>{{ item.description }}</textarea>
   </p>
   <input type="hidden" name="item_id" value="{{ item.id }}" />
   {% for class in all_classes %}
   <p>
-    {{ class }}: <br />
-    <select name="classes">
+    <label for="class{{ class }}">{{ class }}:</label><br />
+    <select name="classes" id="class{{ class }}">
     {% for option in all_classes[class] %}
       <option value="{{ class }}:{{ option }}" 
         {% if classes[class] == option %} selected {% endif %}>

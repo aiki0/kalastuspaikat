@@ -37,8 +37,8 @@
     <li><a href="/user/{{ value.username}}">{{ value.username }}</a>: {{ value.comment }}</li>
     {% endfor %}
     <form action="/create_comment" method="post">
-        <label for="comment"></label><br>
-        <textarea name="comment" maxlength="500" rows="3" cols="30" placeholder="Lisää kommentti:"></textarea><br>
+        <label for="comment">Kommentoi:</label><br>
+        <textarea name="comment" id="comment" maxlength="500" rows="3" cols="30" placeholder="Lisää kommentti:"></textarea><br>
         <input type="hidden" name="item_id" value="{{ item.id }}" />
         <input type="submit" value="Lisää kommentti" />
     </form>

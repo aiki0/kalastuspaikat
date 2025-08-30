@@ -17,17 +17,17 @@
     <input type="hidden" name="item_id" value="{{ item.id }}" />
     <input type="submit" value="Poista valitut kuvat" />
 </form>
-
-<h3> Lisää uusi kuva</h3>
 <form action="/add_image" method="post" enctype="multipart/form-data">
     <p>
-        Kuva: <input type="file" name="image" accept=".png" />
-    </p>
+        <h3><label for="image">Lisää kuva:</label><br /></h3>
+        <input type="file" id="image" name="image" accept=".png" />
+
     <input type="hidden" name="item_id" value="{{ item.id }}" />
     <input type="submit" value="Lähetä" />
+    </p>
     </form>
 
 <p>
-    <a href="/item/{{ item.id }}">Takaisin ilmoituksiin</a>
+    <a href="/item/{{ item.id }}">Takaisin ilmoitukseen</a>
 </p>
 {% endblock %}

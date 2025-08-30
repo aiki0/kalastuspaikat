@@ -3,11 +3,12 @@
 {% block title %}Etsi ilmoitus{% endblock %}
 
 {% block content %}
-  <h2>Etsi kalapaikkoja</h2>
-  <form action="/find_items" method="get">
-    <input type="text" name="query" placeholder="Hae paikkoja..." value="{{ query }}">
-    <button type="submit">Hae</button>
-  </form>
+<h2>Etsi kalapaikkoja</h2>
+<form action="/find_items" method="get">
+  <label for="query">Hakusana:</label><br>
+  <input type="text" id="query" name="query" placeholder="Hae paikkoja..." value="{{ query }}">
+  <button type="submit">Hae</button>
+</form>
 
   <h2>Hakutulokset</h2>
   {% if query %}
