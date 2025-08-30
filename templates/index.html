@@ -7,31 +7,21 @@
 
 <body>
     <h1>Kalastuspaikat</h1>
-
   {% if session.username %}
   <p>
     Olet kirjautunut nimellä {{ session.username }}
   </p>
-  <p>
-    <a href="/logout">Kirjaudu ulos</a>
-  </p>
-
-  <p>
-    <a href="/new_item">Uusi ilmoitus</a>
-  </p>
-  {% else %}
-  <p>
-    Et ole kirjautunut sisään.
-    <a href="/register">Rekisteröidy</a>
-    <a href="/login">Kirjaudu sisään</a>
-  </p>
   {% endif %}
+  
   <p>
-
-  </p>
-
-  <p>
-    <a href="/find_items">Etsi ilmoituksia</a>
+    <a href="/find_items">Etsi ilmoituksia</a> |
+  {% if session.username %}
+    <a href="/new_item">Uusi ilmoitus</a> |
+    <a href="/logout">Kirjaudu ulos</a>
+  {% else %}
+    <a href="/register">Rekisteröidy</a> |
+    <a href="/login">Kirjaudu sisään</a>
+  {% endif %} 
   </p>
   <h2>Ilmoitukset</h2>
     <ul>
