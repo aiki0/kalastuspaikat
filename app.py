@@ -4,6 +4,7 @@ from flask import abort, redirect, render_template, request, session, make_respo
 import config
 import items
 import users
+import markupsafe
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -24,6 +25,12 @@ def show_user(username):
         abort(404) 
     user_items = users.get_items(username)
     return render_template("show_user.html", user=user, items=user_items)
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
 
 
 @app.route("/item/<int:item_id>")

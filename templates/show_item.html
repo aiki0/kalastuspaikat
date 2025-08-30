@@ -11,15 +11,14 @@
         <a href="/images/{{ item.id }}">Kuvat</a>
     </p>
     {% endif %}
-    <h2>{{ item.title }}</h2>
+    <h1>{{ item.title }}</h1>
 
-    <p class="item-description">{{ item.description }}</p>
+    <p class="item-description">{{ item.description | show_lines }}</p>
     {% if classes %}
     <p>
         {% for class in classes%}
         <li>{{ class.title}}: {{ class.value }}</li>
         {% endfor %}
-
     {% endif %}
     {% if item %}
         
