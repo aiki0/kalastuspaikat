@@ -190,6 +190,21 @@ def add_image():
     items.add_image(item_id, image)
     return redirect("/images/" + str(item_id))
 
+@app.route("/remove_images", methods=["POST"])
+def remove_images():
+    require_login()
+    item_id = request.form["item_id"]
+    item = items.get_item(item_id)
+    if item is None:
+        abort(404)
+    if item["username"] != session["username"]:
+        abort(403)
+
+    for image_id in request.form.getlist("image_id"):
+        items.remove_image(image_id, item_id)
+
+    return redirect("/images/" + str(item_id))
+
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
 def remove_item(item_id):
     require_login()

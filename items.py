@@ -56,6 +56,10 @@ def get_image(image_id):
     result = db.query(sql, [image_id])
     return result[0][0] if result else None
 
+def remove_image(image_id, item_id):
+    sql = "DELETE FROM images WHERE id = ? AND item_id = ?"
+    db.execute(sql, [image_id, item_id])
+
 def get_item(item_id):
     sql = """SELECT items.title,
     items.id,
