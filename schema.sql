@@ -30,3 +30,9 @@ CREATE TABLE comments (
     user_id INTEGER REFERENCES users(id),
     comment TEXT
 );
+
+CREATE TABLE images (
+    id INTEGER PRIMARY KEY,
+    item_id INTEGER REFERENCES items(id),
+    image BLOB
+);

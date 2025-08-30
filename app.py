@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import abort, redirect, render_template, request, session
+from flask import abort, redirect, render_template, request, session, make_response
 import db
 import config
 import items
@@ -35,7 +35,19 @@ def show_item(item_id):
         abort(404)
     classes = items.get_classes(item_id)
     comments = items.get_comments(item_id)
-    return render_template("show_item.html", item=item, classes=classes, comments=comments)
+    images = items.get_images(item_id) 
+    return render_template("show_item.html", item=item, classes=classes, comments=comments, images=images)
+
+@app.route("/image/<int:image_id>")
+def show_image(image_id):
+    image = items.get_image(image_id)
+    if not image:
+        abort(404)
+
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/png")
+    return response
+
 
 @app.route("/new_item")
 def new_item():
@@ -145,6 +157,38 @@ def edit_item(item_id):
                 abort(403)
             classes.append((class_title, class_value))
     return render_template("edit_item.html", item=item, classes=classes, all_classes=all_classes)
+
+@app.route("/images/<int:item_id>")
+def edit_images(item_id):
+    require_login()
+    item = items.get_item(item_id)
+    if item is None:
+        abort(404)
+    if item["username"] != session["username"]:
+        abort(403)
+    images = items.get_images(item_id)
+    return render_template("images.html", item=item, images=images)        
+
+@app.route("/add_image", methods=["POST"])
+def add_image():
+    require_login()
+    item_id = request.form["item_id"]
+    item = items.get_item(item_id)
+    if item is None:
+        abort(404)
+    if item["username"] != session["username"]:
+        abort(403)
+
+    file = request.files["image"]
+    if not file.filename.endswith(".png"):
+        return "VIRHE: väärä tiedostomuoto"
+
+    image = file.read()
+    if len(image) > 100 * 1024:
+        return "VIRHE: liian suuri kuva"
+
+    items.add_image(item_id, image)
+    return redirect("/images/" + str(item_id))
 
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
 def remove_item(item_id):
