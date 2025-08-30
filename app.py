@@ -1,7 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import abort, redirect, render_template, request, session, make_response
-import db
+from flask import abort, redirect, render_template, request, session, make_response, flash
 import config
 import items
 import users
@@ -24,7 +23,6 @@ def show_user(username):
     if user is None:
         abort(404) 
     user_items = users.get_items(username)
-
     return render_template("show_user.html", user=user, items=user_items)
 
 
@@ -86,18 +84,13 @@ def create_comment():
 def create_item():
     require_login()
     title = request.form["title"]
-    if len(title) < 3:
-        return render_template("new_item.html", error="Otsikon tulee olla vähintään 3 merkkiä pitkä")
-    if len(title) > 45:
-        return render_template("new_item.html", error="Otsikon tulee olla enintään 45 merkkiä pitkä")
     description = request.form["description"]
-    if len(description) > 1000:
-        return render_template("new_item.html", error="Kuvauksen tulee olla enintään 1000 merkkiä pitkä")
+    if not title or len(title) > 46:
+        abort(403)
+    if not description or len(description) > 1000:
+        abort(403)
     username = session["username"]
-    
     all_classes = items.get_all_classes()
-
-
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
@@ -120,15 +113,11 @@ def update_item():
     if item["username"] != session["username"]:
         abort(403)
     title = request.form["title"]
-    if len(title) < 3:
-        abort(400, "Otsikon tulee olla vähintään 3 merkkiä pitkä")
-    if len(title) > 45:
-        abort(400, "Otsikon tulee olla enintään 45 merkkiä pitkä")
-
     description = request.form["description"]
-    if len(description) > 1000:
-        abort(400, "Kuvauksen tulee olla enintään 1000 merkkiä pitkä")
-
+    if not title or len(title) > 46:
+        abort(403)
+    if not description or len(description) > 1000:
+        abort(403)
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
@@ -236,16 +225,30 @@ def register():
 
 @app.route("/create", methods=["POST"])
 def create():
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
+    username = request.form.get("username", "").strip()
+    password1 = request.form.get("password1", "").strip()
+    password2 = request.form.get("password2", "").strip()
+
+    if not username:
+        flash("VIRHE: Käyttäjätunnus ei voi olla tyhjä")
+        return render_template("register.html", username=username)
+
     if password1 != password2:
-        return "VIRHE: salasanat eivät ole samat"
+        flash("VIRHE: Salasanat eivät ole samat")
+        return render_template("register.html", username=username)
+
+    if not password1 or not password2:
+        flash("VIRHE: Salasana ei voi olla tyhjä")
+        return render_template("register.html", username=username)
+
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
-    return redirect("/")
+        flash("VIRHE: tunnus on jo varattu")
+        return render_template("register.html", username=username)
+
+    flash("Käyttäjä luotu! Kirjaudu sisään.")
+    return redirect("/login")
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
@@ -260,8 +263,8 @@ def login():
             session["username"] = username
             return redirect("/")
         else:
-            return "VIRHE: väärä tunnus tai salasana"
-
+            flash("VIRHE: väärä tunnus tai salasana")
+            return redirect("/login")
 @app.route("/logout")
 def logout():
     if "username" in session:

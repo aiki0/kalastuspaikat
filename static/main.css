@@ -1,6 +1,39 @@
 body {
-    margin: auto;
-    max-width: 50em;
     font-family: sans-serif;
-    background-color: lightblue;
-  }
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.top {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+.middle {
+    background-color: #444;
+    color: white;
+    flex: 1;
+    text-align: center;
+    padding: 20px;
+}
+
+.bottom {
+    background-color: #222;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+a {
+    color: #c5e019;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: dotted underline;
+}
+

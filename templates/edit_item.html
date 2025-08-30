@@ -10,11 +10,11 @@
   {% endif %}
   <p>
     Otsikko: <br />
-    <input type="text" name="title" maxlength="45" value="{{ item.title }}" />
+    <input type="text" name="title" maxlength="45" value="{{ item.title }}" required />
   </p>
   <p>
     Kuvaus: <br />
-    <textarea rows="8" cols="40" name="description" maxlength="1000">{{ item.description }}</textarea>
+    <textarea rows="8" cols="40" name="description" maxlength="1000" required>{{ item.description }}</textarea>
   </p>
   <input type="hidden" name="item_id" value="{{ item.id }}" />
   {% for class in all_classes %}

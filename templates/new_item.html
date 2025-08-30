@@ -10,11 +10,11 @@
   {% endif %}
   <p>
     Otsikko: <br />
-    <input type="text" name="title" maxlength="45" />
+    <input type="text" name="title" maxlength="45" required />
   </p>
   <p>
     Kuvaus: <br />
-    <textarea rows="8" cols="40" name="description" maxlength="1000"></textarea>
+    <textarea rows="8" cols="40" name="description" maxlength="999"required ></textarea>
   </p>
   {% for class in classes %}
   <p>

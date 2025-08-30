@@ -14,7 +14,6 @@
     <p>Hakutulokset hakusanalla: <strong>{{ query }}</strong></p>
   {% endif %}
 
-  <ul>
     {% if not items %}
       <li>Ei tuloksia</li>
     {% else %}
@@ -22,5 +21,4 @@
         <li><a href="/item/{{ item.id }}">{{ item.title }}</a></li>
       {% endfor %}
     {% endif %}
-  </ul>
 {% endblock %}

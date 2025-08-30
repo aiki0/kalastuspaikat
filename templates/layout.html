@@ -4,28 +4,38 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="/static/main.css">
-  </head>
+</head>
 
 <body>
-    <h1>Kalastuspaikat</h1>
-  {% if session.username %}
-  <p>
-    Olet kirjautunut nimellä {{ session.username }}
-  </p>
-  {% endif %}
-  
-  <p>
-    <a href="/">Etusivu</a> |
-    <a href="/find_items">Etsi ilmoituksia</a> |
-  {% if session.username %}
-    <a href="/new_item">Uusi ilmoitus</a> |
-    <a href="/logout">Kirjaudu ulos</a>
-  {% else %}
-    <a href="/register">Rekisteröidy</a> |
-    <a href="/login">Kirjaudu sisään</a>
-  {% endif %} 
-  </p>
-    {% block content %}{% endblock %}
+    <div class="top">
+        {% if session.username %}
+          Kirjautuneena nimellä: <a href="/user/{{ session.username}}">{{ session.username }}</a>
+        {% endif %}
+        {% for message in get_flashed_messages() %}
+        <div class="info">
+          {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    <div class="middle">
+        <p>
+            <a href="/">Etusivu</a> |
+            <a href="/find_items">Etsi ilmoituksia</a> |
+            {% if session.username %}
+                <a href="/new_item">Uusi ilmoitus</a> |
+                <a href="/logout">Kirjaudu ulos</a>
+            {% else %}
+                <a href="/register">Rekisteröidy</a> |
+                <a href="/login">Kirjaudu sisään</a>
+            {% endif %}
+        </p>
+        {% block content %}{% endblock %}
+    </div>
+    <div class="bottom">
+        <footer>
+            <p>Kalastuspaikat - Parhaat vinkit ja paikat kalastukseen.</p>
+        </footer>
+    </div>
 </body>
 
 </html>

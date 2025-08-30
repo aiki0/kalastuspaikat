@@ -3,41 +3,45 @@
 {% block title %}{{  item.title  }}{% endblock %}
 
 {% block content %}
-    <h2>{{ item.title }}</h2>
+
     {% if session.username == item.username %}
     <p>
-        <a href="/edit_item/{{ item.id }}">Muokkaa</a>
-        <a href="/remove_item/{{ item.id }}">Poista</a>
+        <a href="/edit_item/{{ item.id }}">Muokkaa</a> |
+        <a href="/remove_item/{{ item.id }}">Poista</a> |
         <a href="/images/{{ item.id }}">Kuvat</a>
     </p>
     {% endif %}
-
-    {% for image in images %}
-    <img src="/image/{{ image.id }}" alt="Kuva ilmoituksesta" width="300" />
-    {% endfor %}
-
+    <h2>{{ item.title }}</h2>
 
     <p>{{ item.description }}</p>
-    <p>
-        <p>Ilmoittaja: <a href="/user/{{ item.username }}">{{ item.username }}</a>
-        </p>
     {% if classes %}
-        <p>INFO
-            {% for class in classes%}
-            <li>{{ class.title}}: {{ class.value }}</li>
-            {% endfor %}
-        </p>
-    </p>
+    <p>
+        {% for class in classes%}
+        <li>{{ class.title}}: {{ class.value }}</li>
+        {% endfor %}
+
     {% endif %}
-    <h3>Kommentit</h3>
-    {% for value in comments %}
-    <li>{{ value.comment }}, <a href="/user/{{ value.username}}">{{ value.username }}</a></li>
+    {% if item %}
+        
+        
+    <li>Ilmoittaja: <a href="/user/{{ item.username }}">{{ item.username }}</a></li> 
+    </p>
+    {% for image in images %}
+    <img src="/image/{{ image.id }}" alt="Kuva ilmoituksesta" width="150" />
     {% endfor %}
-    <h3>Uusi kommentti</h3>
+
+    {% endif %}
+    {% if comments %}
+    <h3>Kommentit</h3>
+    {%endif%}
+    {% for value in comments %}
+    <li><a href="/user/{{ value.username}}">{{ value.username }}</a>: {{ value.comment }}</li>
+    {% endfor %}
     <form action="/create_comment" method="post">
-        Kommentti:<br>
-        <textarea name="comment" maxlength="500" rows="5" cols="50"></textarea><br>
+        <label for="comment"></label><br>
+        <textarea name="comment" maxlength="500" rows="3" cols="30" placeholder="Lisää kommentti:"></textarea><br>
         <input type="hidden" name="item_id" value="{{ item.id }}" />
         <input type="submit" value="Lisää kommentti" />
     </form>
+    
 {% endblock %}
