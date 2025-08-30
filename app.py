@@ -352,6 +352,5 @@ def login():
             return redirect("/login")
 @app.route("/logout")
 def logout():
-    if "username" in session:
-        del session["username"]
+    session.clear()
     return redirect("/")

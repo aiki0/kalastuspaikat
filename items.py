@@ -43,10 +43,6 @@ def get_classes(item_id):
     sql = "SELECT title, value FROM item_classes WHERE item_id = ?"
     return db.query(sql, [item_id])
 
-def comment_count(item_id):
-    sql = "SELECT COUNT(*) AS count FROM comments WHERE item_id = ?"
-    return db.query(sql, [item_id])[0]["count"]
-
 def get_items(page, page_size):
     sql = """SELECT id, title
              FROM items
@@ -60,6 +56,10 @@ def item_count():
     sql = "SELECT COUNT(*) AS count FROM items"
     result = db.query(sql)
     return result[0]["count"] if result else 0
+
+def comment_count(item_id):
+    sql = "SELECT COUNT(*) AS count FROM comments WHERE item_id = ?"
+    return db.query(sql, [item_id])[0]["count"]
 
 def get_images(item_id):
     sql = "SELECT id FROM images WHERE item_id = ?"
