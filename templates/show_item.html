@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
- <title>{{ item.title }}</title>
-</head>
+{% block title %}{{  item.title  }}{% endblock %}
 
-<body>
-    <h1>Kalastuspaikka</h1>
+{% block content %}
+    <h2>{{ item.title }}</h2>
     {% if session.username == item.username %}
     <p>
         <a href="/edit_item/{{ item.id }}">Muokkaa</a>
@@ -14,7 +11,6 @@
         <a href="/images/{{ item.id }}">Kuvat</a>
     </p>
     {% endif %}
-    <h1>{{ item.title }}</h1>
 
     {% for image in images %}
     <img src="/image/{{ image.id }}" alt="Kuva ilmoituksesta" width="300" />
@@ -33,20 +29,15 @@
         </p>
     </p>
     {% endif %}
-    <h2>Kommentit</h2>
+    <h3>Kommentit</h3>
     {% for value in comments %}
     <li>{{ value.comment }}, <a href="/user/{{ value.username}}">{{ value.username }}</a></li>
     {% endfor %}
-    <h2>Uusi kommentti</h2>
+    <h3>Uusi kommentti</h3>
     <form action="/create_comment" method="post">
         Kommentti:<br>
         <textarea name="comment" maxlength="500" rows="5" cols="50"></textarea><br>
         <input type="hidden" name="item_id" value="{{ item.id }}" />
         <input type="submit" value="Lisää kommentti" />
     </form>
-    <p>
-        <a href="/">Takaisin ilmoituksiin</a>
-    </p>
-</body>
-
-</html>
+{% endblock %}

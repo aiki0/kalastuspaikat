@@ -1,20 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Kirjautuminen</title>
-</head>
+{% block title %}Kirjaudu sisään{% endblock %}
 
-<body>
-    <h1>Kirjaudu sisään</h1>
-  {% if session.username %}
-  <p>
-    Olet kirjautunut nimellä {{ session.username }}
-  </p>
-  <p>
-    <a href="/logout">Kirjaudu ulos</a>
-  </p>
-  {% else %}
+{% block content %}
+<h2>Kirjaudu sisään</h2>
   <form action="/login" method="post">
     <p>
       Tunnus: <br />
@@ -26,7 +15,6 @@
     </p>
     <input type="submit" value="Kirjaudu" />
   </form>
-  {% endif %}
 </body>
 
-</html>
+{% endblock %}

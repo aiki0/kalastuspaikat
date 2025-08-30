@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
- <title>Käyttäjä {{ user.username }}</title>
-</head>
+{% block title %}{{  user.username  }}{% endblock %}
 
-<body>
+{% block content %}
     <h1>Käyttäjä {{ user.username }}</h1>
     <p>
-        <a href="/">Takaisin ilmoituksiin</a>
+    <a href="/">Takaisin ilmoituksiin</a>
     </p>
     Käyttäjällä on {{ items|length }} ilmoitusta.
     <p>
@@ -17,7 +14,6 @@
         {% for item in items %}
         <li><a href="/item/{{ item.id }}">{{ item.title }}</a></li>
         {% endfor %}
-
-</body>
-
-</html>
+    </ul>
+    </p>
+{% endblock %}

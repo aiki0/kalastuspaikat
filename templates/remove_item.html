@@ -1,20 +1,14 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Ilmoituksen poisto</title>
-</head>
-<body>
-  <h1>Ilmoituksen poisto</h1>
-  <p>Oletko varma, että haluat poistaa ilmoituksen "{{ item.title }}"?</p>
-  <form action="/remove_item/{{ item.id }}" method="post">
-    <input type="submit" name="remove"value="Kyllä, poista ilmoitus" />
-    <input type="submit" name="back" value="Peruuta" />
+{% block title %}Ilmoituksen poisto{% endblock %}
 
-  </form>
-  <p>
+{% block content %}
 
-  </p>
-</body>
-</html>
- 
+<h1>Ilmoituksen poisto</h1>
+<p>Oletko varma, että haluat poistaa ilmoituksen "{{ item.title }}"?</p>
+<form action="/remove_item/{{ item.id }}" method="post">
+  <input type="submit" name="remove"value="Kyllä, poista ilmoitus" />
+  <input type="submit" name="back" value="Peruuta" />
+
+</form>
+{% endblock %}
