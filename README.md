@@ -3,15 +3,12 @@
 
 * ✓Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
 * ✓Käyttäjä pystyy lisäämään, muokkaamaan ja poistamaan omia kalastuspaikkoja.
-* /Käyttäjä pystyy lisäämään luokat ja mahdollisesti kuvia paikkoihin.
+* ✓Käyttäjä pystyy lisäämään luokat ja mahdollisesti kuvia paikkoihin.
 * ✓Käyttäjä näkee sovellukseen lisätyt kalapaikat.
 * ✓Käyttäjä pystyy etsimään paikkoja hakusanoilla (esim kalalaji, vesistö tms..)
 * ✓Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän lisäämät kohteet.
 * ✓Käyttäjä pystyy valitsemaan paikkaan yhden tai useamman luokittelun (esim. vesistön tyyppi, kalalajit, luvallinen/ei).
 * ✓Käyttäjä pystyy luomaan uusia paikkoja.
-
-* Tavoitteena olisi että sovelluksessa käyttäjät voisivat jakaa kokemuksiaan eri kalapaikoista, mahdollisesti kartta API mutta tuskin.
-
 
 # Ohjelman testaaminen
 Ohje koskee macOS/Linux järjestelmiä. Käytä terminaalia ja syötä siihen alla olevia komentoja järjestyksessä.
@@ -24,3 +21,13 @@ Ohje koskee macOS/Linux järjestelmiä. Käytä terminaalia ja syötä siihen al
  * Käynnistä flask serveri -> "flask run"
  * Nettisivut toimivat ip osoitteessa joka syntyy terminaaliin (käytä esim chrome)
  * Nettisivut ovat toistaiseksi hyvin pelkistetyt ja toimivat yksinkertaisesti
+
+
+# Testaus suurilla tietomäärillä
+
+Tietomäärät : Käyttäjiä tuhat, miljoona paikkaa ja kymmenen miljoonaa viestiä
+
+Ennen indeksointia ilmoituksen sivulle paikan sivulle menossa kesti 0.5s-0.6s
+Syynä oli kaikkien kommenttien haku sillä lisäämällä:
+CREATE INDEX idx_item_comments ON comments (item_id);
+Sivulle meno kestää vain 0.01s vaikka pyytää isolla id-numerolla olevaa paikkaa
