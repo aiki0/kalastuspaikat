@@ -8,6 +8,11 @@
 
 <body>
     <div class="top">
+      <input type="checkbox" id="home-link" hidden onclick="window.location='/'">
+      <label for="home-link" style="cursor:pointer; font-size:2em; font-weight:bold;">
+          Kalastuspaikat
+      </label>
+      <br>
         {% if session.username %}
           Kirjautuneena nimellä: <a href="/user/{{ session.username}}">{{ session.username }}</a>
         {% endif %}
@@ -33,7 +38,7 @@
     </div>
     <div class="bottom">
         <footer>
-            <p>Kalastuspaikat - Parhaat vinkit ja paikat kalastukseen.</p>
+            <p>Kalastuspaikat - Parhaat paikat kalastukseen.</p>
         </footer>
     </div>
 </body>

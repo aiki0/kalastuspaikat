@@ -10,18 +10,35 @@ def get_user(username):
         return {"id": user_id, "username": username}
     return None
 
-def get_items(username):
-    sql = """SELECT items.id, items.title, items.description
-             FROM items
-             JOIN users ON items.user_id = users.id
-             WHERE users.username = ?
-             ORDER BY items.id DESC"""
-    return db.query(sql, [username])
+def get_items(username, page=1, page_size=10):
+    offset = (page - 1) * page_size
+    sql = """
+        SELECT items.*
+        FROM items
+        JOIN users ON items.user_id = users.id
+        WHERE users.username = ?
+        ORDER BY items.id DESC
+        LIMIT ? OFFSET ?
+    """
+    return db.query(sql, [username, page_size, offset])
+
+def item_count(username):
+    sql = """
+        SELECT COUNT(*) AS count
+        FROM items
+        JOIN users ON items.user_id = users.id
+        WHERE users.username = ?
+    """
+    result = db.query(sql, [username])
+    return result[0]["count"] if result else 0
+
 
 def create_user(username, password):
     password_hash = generate_password_hash(password)
     sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
     db.execute(sql, [username, password_hash])
+
+
 
 def check_login(username, password):
         sql = "SELECT id, password_hash FROM users WHERE username = ?"

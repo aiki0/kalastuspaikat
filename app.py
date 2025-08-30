@@ -38,12 +38,31 @@ def index(page):
     return render_template("index.html", page=page, page_count=page_count, items=all_items)
 
 @app.route("/user/<username>")
-def show_user(username):
+@app.route("/user/<username>/<int:page>")
+def show_user(username, page=1):
     user = users.get_user(username)
     if user is None:
         abort(404)
-    user_items = users.get_items(username)
-    return render_template("show_user.html", user=user, items=user_items)
+
+    page_size = 10
+    total_items = users.item_count(username)
+    item_count = users.item_count(username)
+    page_count = math.ceil(item_count / page_size)
+    page_count = max(page_count, 1)
+
+    if page < 1:
+        return redirect(f"/user/{username}/1")
+    if page > page_count:
+        return redirect(f"/user/{username}/{page_count}")
+
+    user_items = users.get_items(username, page, page_size)
+    return render_template(
+        "show_user.html",
+        user=user,
+        items=user_items,
+        page=page,
+        page_count=page_count,
+        total_items=total_items,)
 
 @app.template_filter()
 def show_lines(content):
@@ -81,8 +100,7 @@ def show_item(item_id, page):
         comments=comments,
         images=images,
         page=page,
-        page_count=page_count,
-    )
+        page_count=page_count,)
 
 @app.route("/image/<int:image_id>")
 def show_image(image_id):
@@ -101,7 +119,9 @@ def new_item():
         return redirect("/login")
     require_login()
     classes = items.get_all_classes()
-    return render_template("new_item.html", classes=classes)
+    return render_template(
+        "new_item.html",
+        classes=classes)
 
 
 
@@ -194,7 +214,11 @@ def edit_item(item_id):
             if class_value not in all_classes[class_title]:
                 abort(403)
             classes.append((class_title, class_value))
-    return render_template("edit_item.html", item=item, classes=classes, all_classes=all_classes)
+    return render_template(
+        "edit_item.html",
+        item=item,
+        classes=classes, 
+        all_classes=all_classes)
 
 @app.route("/images/<int:item_id>")
 def edit_images(item_id):
@@ -205,7 +229,10 @@ def edit_images(item_id):
     if item["username"] != session["username"]:
         abort(403)
     images = items.get_images(item_id)
-    return render_template("images.html", item=item, images=images)        
+    return render_template(
+        "images.html",
+        item=item,
+        images=images)        
 
 @app.route("/add_image", methods=["POST"])
 def add_image():
@@ -255,7 +282,9 @@ def remove_item(item_id):
         return redirect("/")
     else:
         if request.method == "GET":
-            return render_template("remove_item.html", item=item)
+            return render_template(
+                "remove_item.html",
+                item=item)
         if request.method == "POST":
             check_csrf()
             if "remove" in request.form:
@@ -268,7 +297,10 @@ def remove_item(item_id):
 def finditems():
     query = request.args.get("query") or ""
     all_items = items.find_items(query)
-    return render_template("find_items.html", items=all_items, query=query)
+    return render_template(
+        "find_items.html",
+        items=all_items,
+        query=query)
             
 
 @app.route("/register")

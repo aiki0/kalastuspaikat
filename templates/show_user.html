@@ -1,14 +1,24 @@
 {% extends "layout.html" %}
 
-{% block title %}{{  user.username  }}{% endblock %}
+{% block title %}{{ user.username }}{% endblock %}
 
 {% block content %}
     <h1>Käyttäjä: {{ user.username }}</h1>
-    Käyttäjällä {{ user.username  }} on {{ items|length }} ilmoitusta.
+    Käyttäjällä {{ user.username }} on {{ total_items }} ilmoitusta.
+
+    <h2>Käyttäjän ilmoitukset</h2>
+
     <p>
-    <h2>Ilmoitukset</h2>
-        {% for item in items %}
-        <li><a href="/item/{{ item.id }}">{{ item.title }}</a></li>
-        {% endfor %}
+        {% if page > 1 %}
+            <a href="/user/{{ user.username }}/{{ page - 1 }}">&lt;</a>
+        {% endif %}
+        Sivu {{ page }}/{{ page_count }}
+        {% if page < page_count %}
+            <a href="/user/{{ user.username }}/{{ page + 1 }}">&gt;</a>
+        {% endif %}
     </p>
+
+    {% for item in items %}
+        <li><a href="/item/{{ item.id }}">{{ item.title }}</a></li>
+    {% endfor %}
 {% endblock %}
