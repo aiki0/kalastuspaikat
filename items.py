@@ -111,7 +111,7 @@ def remove_item(item_id):
     sql = "DELETE FROM items WHERE id = ?"
     db.execute(sql, [item_id])
 
-def find_items(query):
+def find_items(query, page, page_size):
     sql = """
         SELECT DISTINCT items.id, items.title
         FROM items
@@ -120,6 +120,23 @@ def find_items(query):
            OR items.description LIKE ?
            OR item_classes.title LIKE ?
            OR item_classes.value LIKE ?
-        ORDER BY items.id DESC"""
+        ORDER BY items.id DESC
+        LIMIT ? OFFSET ?
+    """
     like = "%" + query + "%"
-    return db.query(sql, [like, like, like, like])
+    offset = (page - 1) * page_size
+    return db.query(sql, [like, like, like, like, page_size, offset])
+
+def count_items(query):
+    sql = """
+        SELECT COUNT(DISTINCT items.id) AS count
+        FROM items
+        LEFT JOIN item_classes ON items.id = item_classes.item_id
+        WHERE items.title LIKE ?
+           OR items.description LIKE ?
+           OR item_classes.title LIKE ?
+           OR item_classes.value LIKE ?
+    """
+    like = "%" + query + "%"
+    rows = db.query(sql, [like, like, like, like])
+    return rows[0]["count"] if rows else 0

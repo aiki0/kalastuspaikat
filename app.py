@@ -21,21 +21,32 @@ def check_csrf():
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
-@app.route("/<int:page>")
 @app.route("/", defaults={"page": 1})
+@app.route("/<int:page>")
 def index(page):
     page_size = 10
-    item_count = items.item_count()
-    page_count = math.ceil(item_count / page_size)
-    page_count = max(page_count, 1)
+    query = request.args.get("query", default="", type=str)
+
+    if query:
+        item_count = items.count_items(query)
+        all_items = items.find_items(query, page, page_size)
+    else:
+        item_count = items.item_count()
+        all_items = items.get_items(page, page_size)
+
+    page_count = max(math.ceil(item_count / page_size), 1)
 
     if page < 1:
-        return redirect("/1")
+        return redirect("/1?query=" + query)
     if page > page_count:
-        return redirect(f"/{page_count}")
+        return redirect(f"/{page_count}?query={query}")
 
-    all_items = items.get_items(page, page_size)
-    return render_template("index.html", page=page, page_count=page_count, items=all_items)
+    return render_template(
+        "index.html",
+        page=page,
+        page_count=page_count,
+        items=all_items,
+        query=query)
 
 @app.route("/user/<username>")
 @app.route("/user/<username>/<int:page>")
@@ -69,7 +80,6 @@ def show_lines(content):
     content = str(markupsafe.escape(content))
     content = content.replace("\n", "<br />")
     return markupsafe.Markup(content)
-
 
 @app.route("/item/<int:item_id>/<int:page>")
 @app.route("/item/<int:item_id>", defaults={"page": 1})
@@ -292,16 +302,6 @@ def remove_item(item_id):
                 return redirect("/")
             else:
                 return redirect("/item/" + str(item_id)) 
-            
-@app.route("/find_items", methods=["GET", "POST"])
-def finditems():
-    query = request.args.get("query") or ""
-    all_items = items.find_items(query)
-    return render_template(
-        "find_items.html",
-        items=all_items,
-        query=query)
-            
 
 @app.route("/register")
 def register():
