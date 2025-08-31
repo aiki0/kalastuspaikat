@@ -39,3 +39,4 @@ CREATE TABLE images (
 
 
 CREATE INDEX idx_place_comments ON comments (place_id);
+CREATE INDEX idx_comments_user ON comments(user_id);
