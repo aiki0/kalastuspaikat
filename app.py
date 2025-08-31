@@ -332,6 +332,10 @@ def create():
     if not username:
         flash("VIRHE: Käyttäjätunnus ei voi olla tyhjä")
         return render_template("register.html", username=username)
+    
+    if len(username) > 20:
+        flash("VIRHE: Käyttäjätunnus on liian pitkä (max 20 merkkiä)")
+        return render_template("register.html")
 
     if password1 != password2:
         flash("VIRHE: Salasanat eivät ole samat")
