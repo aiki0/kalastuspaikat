@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 
-{% block title %}Ilmoituksen poisto{% endblock %}
+{% block title %}Paikan poisto{% endblock %}
 
 {% block content %}
 
-<h1>Ilmoituksen poisto</h1>
-<p>Oletko varma, että haluat poistaa ilmoituksen "{{ place.title }}"?</p>
+<h1>Paikan poisto</h1>
+<p>Oletko varma, että haluat <strong>poistaa</strong> kalastuspaikan "{{ place.title }}"?</p>
 <form action="/remove_place/{{ place.id }}" method="post">
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <input type="submit" name="remove"value="Kyllä, poista ilmoitus" />

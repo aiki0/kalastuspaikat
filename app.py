@@ -204,7 +204,7 @@ def create_place():
     description = request.form["description"]
     if not title or len(title) > 46:
         abort(403)
-    if not description or len(description) > 1000:
+    if not description or len(description) > 1001:
         abort(403)
     username = session["username"]
     all_classes = places.get_all_classes()
@@ -235,7 +235,7 @@ def update_place():
     description = request.form["description"]
     if not title or len(title) > 46:
         abort(403)
-    if not description or len(description) > 1000:
+    if not description or len(description) > 1001:
         abort(403)
     classes = []
     for entry in request.form.getlist("classes"):
