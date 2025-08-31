@@ -35,15 +35,6 @@ input[name="title"] {
   padding: 5px;
 }
 
-textarea[name="description"] {
-  width: 30%;
-  height: 160px;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  text-align: center;
-  padding: 5px;
-}
-
 .bottom {
     background-color: #222;
     color: white;
@@ -80,3 +71,19 @@ a:hover {
   overflow-wrap: anywhere;
 }
 
+textarea[name="description"] {
+  width: 30%;
+  height: 160px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: center;
+  padding: 5px;
+}
+
+.info {
+  background-color: #f8d7da;
+  color: #721c24;
+  margin: 10px auto;
+  max-width: 30%;
+  text-align: center;
+}

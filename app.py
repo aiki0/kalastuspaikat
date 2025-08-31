@@ -64,6 +64,7 @@ def show_user(username, page=1):
     page_size = 10
     total_places = users.place_count(username)
     page_count = max(math.ceil(total_places / page_size), 1)
+    total_comments = users.comment_count(username)
 
     if page < 1:
         return redirect(f"/user/{username}/1")
@@ -84,7 +85,8 @@ def show_user(username, page=1):
         page=page,
         page_count=page_count,
         total_places=total_places,
-        place_classes=place_classes)
+        place_classes=place_classes,
+        total_comments=total_comments)
 
 
 @app.template_filter()
@@ -269,15 +271,18 @@ def add_image():
 
     all_images = places.get_images(place_id)
     if len(all_images) >= 3:
-        return "VIRHE: liian monta kuvaa (max 3)"
+        flash("VIRHE: Maksimissaan 3 kuvaa per paikka")
+        return redirect("/images/" + str(place_id))
 
     file = request.files["image"]
     if not file.filename.endswith(".png"):
-        return "VIRHE: väärä tiedostomuoto"
+        flash("VIRHE: Kuvan tulee olla PNG-muotoinen")
+        return redirect("/images/" + str(place_id))
 
     image = file.read()
     if len(image) > 100 * 1024:
-        return "VIRHE: liian suuri kuva"
+        flash("VIRHE: Kuva on liian suuri (max 100 kt)")
+        return redirect("/images/" + str(place_id))
 
     places.add_image(place_id, image)
     return redirect("/images/" + str(place_id))

@@ -46,13 +46,17 @@
       {{ value.comment }}
     </div>
     {% endfor %}
-    <form action="/create_comment" method="post">
-        <label for="comment">Kommentoi: max 100 merkkiä</label><br>
-        <textarea name="comment" id="comment" maxlength="100" rows="3" cols="30" required placeholder="Lisää kommentti:"></textarea><br>
-        <input type="hidden" name="place_id" value="{{ place.id }}" />
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-        <input type="submit" value="Lisää kommentti" />
-    </form>
+    {% if session.username %}
+        <form action="/create_comment" method="post">
+            <label for="comment">Kommentoi: max 100 merkkiä</label><br>
+            <textarea name="comment" id="comment" maxlength="100" rows="3" cols="30" required placeholder="Lisää kommentti:"></textarea><br>
+            <input type="hidden" name="place_id" value="{{ place.id }}" />
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+            <input type="submit" value="Lisää kommentti" />
+        </form>
+    {% else %}
+        <p><a href="/login">Kirjaudu sisään</a> kommentoidaksesi.</p>
+    {% endif %}
 
 
     

@@ -18,9 +18,17 @@ def get_places(username, page=1, page_size=10):
         JOIN users ON places.user_id = users.id
         WHERE users.username = ?
         ORDER BY places.id DESC
-        LIMIT ? OFFSET ?
-    """
+        LIMIT ? OFFSET ?"""
     return db.query(sql, [username, page_size, offset])
+
+def comment_count(username):
+    sql = """
+        SELECT COUNT(c.id) AS count
+        FROM comments c
+        JOIN users u ON c.user_id = u.id
+        WHERE u.username = ?"""
+    result = db.query(sql, [username])
+    return result[0]["count"] if result else 0
 
 def place_count(username):
     sql = """
@@ -51,3 +59,5 @@ def check_login(username, password):
             return user_id
         else:
             return None
+        
+
