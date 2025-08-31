@@ -44,10 +44,12 @@ def get_classes(place_id):
     return db.query(sql, [place_id])
 
 def get_places(page, page_size):
-    sql = """SELECT id, title
-             FROM places
-             ORDER BY id DESC
-             LIMIT ? OFFSET ?"""
+    sql = """
+        SELECT places.id, places.title, users.username
+        FROM places
+        JOIN users ON places.user_id = users.id
+        ORDER BY places.id DESC
+        LIMIT ? OFFSET ?"""
     limit = page_size
     offset = page_size * (page - 1)
     return db.query(sql, [limit, offset])

@@ -13,7 +13,6 @@ body {
     text-align: center;
 }
 
-
 .middle {
     background-color: #444;
     color: white;
@@ -59,5 +58,25 @@ a {
 
 a:hover {
     text-decoration: dotted underline;
+}
+
+.place-box {
+  width: 40%;
+  background: #1e1e1e;
+  color: #eee;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px;
+  margin: 10px auto;
+  overflow-wrap: anywhere;
+}
+
+.description-box {
+  width: 40%;
+  background: #201c1c;
+  border-radius: 6px;
+  padding: 10px;
+  margin: 10px auto;
+  overflow-wrap: anywhere;
 }
 

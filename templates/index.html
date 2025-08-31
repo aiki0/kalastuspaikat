@@ -3,7 +3,7 @@
 {% block title %}Kalastuspaikat{% endblock %}
 
 {% block content %}
-<h2>Ilmoitukset</h2>
+<h2>Paikka ilmoitukset</h2>
 
 <form action="/" method="get">
   <label for="query">Hae:</label><br>
@@ -29,7 +29,18 @@
   <li>Ei tuloksia</li>
 {% else %}
   {% for place in places %}
-    <li><a href="/place/{{ place.id }}">{{ place.title }}</a></li>
+    <div class="place-box">
+      <a href="/place/{{ place.id }}">{{ place.title }}</a><br>
+      <small>
+        Käyttäjältä: <a href="/user/{{ place.username }}">{{ place.username }}</a>
+        {% if place_classes.get(place.id) %}
+          | 
+          {% for class in place_classes[place.id] %}
+            {{ class }}{% if not loop.last %} | {% endif %}
+          {% endfor %}
+        {% endif %}
+      </small>
+    </div>
   {% endfor %}
 {% endif %}
 {% endblock %}

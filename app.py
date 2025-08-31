@@ -41,12 +41,18 @@ def index(page):
     if page > page_count:
         return redirect(f"/{page_count}?query={query}")
 
+    place_classes = {}
+    for place in all_places:
+        rows = places.get_classes(place["id"])
+        place_classes[place["id"]] = [f"{row['title']}: {row['value']}" for row in rows]
+
     return render_template(
         "index.html",
         page=page,
         page_count=page_count,
         places=all_places,
-        query=query)
+        query=query,
+        place_classes=place_classes)
 
 @app.route("/user/<username>")
 @app.route("/user/<username>/<int:page>")
@@ -57,9 +63,7 @@ def show_user(username, page=1):
 
     page_size = 10
     total_places = users.place_count(username)
-    place_count = users.place_count(username)
-    page_count = math.ceil(place_count / page_size)
-    page_count = max(page_count, 1)
+    page_count = max(math.ceil(total_places / page_size), 1)
 
     if page < 1:
         return redirect(f"/user/{username}/1")
@@ -67,13 +71,21 @@ def show_user(username, page=1):
         return redirect(f"/user/{username}/{page_count}")
 
     user_places = users.get_places(username, page, page_size)
+
+    place_classes = {}
+    for place in user_places:
+        rows = places.get_classes(place["id"])
+        place_classes[place["id"]] = [f"{row['title']}: {row['value']}" for row in rows]
+
     return render_template(
         "show_user.html",
         user=user,
         places=user_places,
         page=page,
         page_count=page_count,
-        total_places=total_places,)
+        total_places=total_places,
+        place_classes=place_classes)
+
 
 @app.template_filter()
 def show_lines(content):
@@ -110,7 +122,7 @@ def show_place(place_id, page):
         comments=comments,
         images=images,
         page=page,
-        page_count=page_count,)
+        page_count=page_count)
 
 @app.route("/image/<int:image_id>")
 def show_image(image_id):

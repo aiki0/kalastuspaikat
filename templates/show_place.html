@@ -13,16 +13,19 @@
     {% endif %}
     <h1>{{ place.title }}</h1>
 
-    <p class="place-description">{{ place.description | show_lines }}</p>
+    <h2>Kuvaus</h2>
+    <div class="description-box">{{ place.description | show_lines }}
+            
     {% if classes %}
     <p>
+
         {% for class in classes%}
         <li>{{ class.title}}: {{ class.value }}</li>
         {% endfor %}
     {% endif %}  
         
     <li>Ilmoittaja: <a href="/user/{{ place.username }}">{{ place.username }}</a></li> 
-    </p>
+    </p></div>
     {% for image in images %}
     <img src="/image/{{ image.id }}" alt="Kuva ilmoituksesta" width="150" />
     {% endfor %}
@@ -38,10 +41,10 @@
     </h3>
     {% endif %}
     {% for value in comments %}
-    
-    <li><a href="/user/{{ value.username}}">{{ value.username }}</a>: {{ value.comment }}</li>
-    <br>
-    
+    <div class="place-box">
+      <a href="/user/{{ value.username }}">{{ value.username }}</a>: 
+      {{ value.comment }}
+    </div>
     {% endfor %}
     <form action="/create_comment" method="post">
         <label for="comment">Kommentoi: max 100 merkkiä</label><br>
