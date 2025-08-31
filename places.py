@@ -1,14 +1,17 @@
 import db
+
+
 def get_all_classes():
     sql = "SELECT title, value FROM classes ORDER BY id"
     result = db.query(sql)
-    
+
     classes = {}
     for title, value in result:
         classes[title] = []
     for title, value in result:
         classes[title].append(value)
     return classes
+
 
 def add_place(title, description, username, classes):
     sql = "SELECT id FROM users WHERE username = ?"
@@ -19,13 +22,15 @@ def add_place(title, description, username, classes):
     place_id = db.last_insert_id()
 
     sql = "INSERT INTO place_classes (place_id, title, value) VALUES (?, ?, ?)"
-    for title, value in classes:
-        db.execute(sql, [place_id, title, value])
+    for place_title, place_value in classes:
+        db.execute(sql, [place_id, place_title, place_value])
+
 
 def add_comment(comment, user_id, place_id):
     sql = """INSERT INTO comments (place_id, user_id, comment)
              VALUES (?, ?, ?)"""
     db.execute(sql, [place_id, user_id, comment])
+
 
 def get_comments(place_id, page, page_size):
     sql = """
@@ -38,10 +43,12 @@ def get_comments(place_id, page, page_size):
     limit = page_size
     offset = page_size * (page - 1)
     return db.query(sql, [place_id, limit, offset])
-    
+
+
 def get_classes(place_id):
     sql = "SELECT title, value FROM place_classes WHERE place_id = ?"
     return db.query(sql, [place_id])
+
 
 def get_places(page, page_size):
     sql = """
@@ -54,18 +61,22 @@ def get_places(page, page_size):
     offset = page_size * (page - 1)
     return db.query(sql, [limit, offset])
 
+
 def place_count():
     sql = "SELECT COUNT(*) AS count FROM places"
     result = db.query(sql)
     return result[0]["count"] if result else 0
 
+
 def comment_count(place_id):
     sql = "SELECT COUNT(*) AS count FROM comments WHERE place_id = ?"
     return db.query(sql, [place_id])[0]["count"]
 
+
 def get_images(place_id):
     sql = "SELECT id FROM images WHERE place_id = ?"
     return db.query(sql, [place_id])
+
 
 def add_image(place_id, image):
     sql = "INSERT INTO images (place_id, image) VALUES (?, ?)"
@@ -77,9 +88,11 @@ def get_image(image_id):
     result = db.query(sql, [image_id])
     return result[0][0] if result else None
 
+
 def remove_image(image_id, place_id):
     sql = "DELETE FROM images WHERE id = ? AND place_id = ?"
     db.execute(sql, [image_id, place_id])
+
 
 def get_place(place_id):
     sql = """SELECT places.title,
@@ -92,16 +105,18 @@ def get_place(place_id):
     result = db.query(sql, [place_id])
     return result[0] if result else None
 
+
 def update_place(place_id, title, description, classes):
     sql = "UPDATE places SET title = ?, description = ? WHERE id = ?"
     db.execute(sql, [title, description, place_id])
-    
+
     sql = "DELETE FROM place_classes WHERE place_id = ?"
     db.execute(sql, [place_id])
 
     sql = "INSERT INTO place_classes (place_id, title, value) VALUES (?, ?, ?)"
-    for title, value in classes:
-        db.execute(sql, [place_id, title, value])
+    for place_title, place_value in classes:
+        db.execute(sql, [place_id, place_title, place_value])
+
 
 def remove_place(place_id):
     sql = "DELETE FROM comments WHERE place_id = ?"
@@ -112,6 +127,7 @@ def remove_place(place_id):
     db.execute(sql, [place_id])
     sql = "DELETE FROM places WHERE id = ?"
     db.execute(sql, [place_id])
+
 
 def find_places(query, page, page_size):
     sql = """
@@ -128,6 +144,7 @@ def find_places(query, page, page_size):
     like = "%" + query + "%"
     offset = (page - 1) * page_size
     return db.query(sql, [like, like, like, like, page_size, offset])
+
 
 def count_places(query):
     sql = """

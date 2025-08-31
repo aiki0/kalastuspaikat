@@ -1,4 +1,5 @@
 import random
+
 import sqlite3
 
 db = sqlite3.connect("database.db")
@@ -18,7 +19,7 @@ for i in range(1, user_count + 1):
 for i in range(1, place_count + 1):
     user_id = random.randint(1, user_count)
     db.execute(
-        """INSERT INTO places (title, description, user_id) 
+        """INSERT INTO places (title, description, user_id)
            VALUES (?, ?, ?)""",
         [f"place{i}", f"description{i}", user_id])
 

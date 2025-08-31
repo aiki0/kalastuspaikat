@@ -2,6 +2,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 import db
 
+
 def get_user(username):
     sql = "SELECT id, username FROM users WHERE username = ?"
     result = db.query(sql, [username])
@@ -9,6 +10,7 @@ def get_user(username):
         user_id, username = result[0]
         return {"id": user_id, "username": username}
     return None
+
 
 def get_places(username, page=1, page_size=10):
     offset = (page - 1) * page_size
@@ -21,6 +23,7 @@ def get_places(username, page=1, page_size=10):
         LIMIT ? OFFSET ?"""
     return db.query(sql, [username, page_size, offset])
 
+
 def comment_count(username):
     sql = """
         SELECT COUNT(c.id) AS count
@@ -29,6 +32,7 @@ def comment_count(username):
         WHERE u.username = ?"""
     result = db.query(sql, [username])
     return result[0]["count"] if result else 0
+
 
 def place_count(username):
     sql = """
@@ -47,17 +51,13 @@ def create_user(username, password):
     db.execute(sql, [username, password_hash])
 
 
-
 def check_login(username, password):
-        sql = "SELECT id, password_hash FROM users WHERE username = ?"
-        result = db.query(sql, [username])
-        if not result:
-            return False
-        user_id = result[0]["id"]
-        password_hash = result[0]["password_hash"]
-        if check_password_hash(password_hash, password):
-            return user_id
-        else:
-            return None
-        
-
+    sql = "SELECT id, password_hash FROM users WHERE username = ?"
+    result = db.query(sql, [username])
+    if not result:
+        return False
+    user_id = result[0]["id"]
+    password_hash = result[0]["password_hash"]
+    if check_password_hash(password_hash, password):
+        return user_id
+    return None

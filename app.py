@@ -1,25 +1,52 @@
 import sqlite3
-from flask import Flask
+import secrets
 import math
-from flask import abort, redirect, render_template, request, session, make_response, flash
+import time
+
+from flask import Flask
+from flask import g, request, session
+from flask import abort, redirect, render_template, make_response, flash
+import markupsafe
+
 import config
 import places
 import users
-import markupsafe
-import secrets
+
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
+
 def require_login():
     if "username" not in session:
         abort(403)
+
 
 def check_csrf():
     if "csrf_token" not in request.form:
         abort(403)
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
+
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
+
+
+@app.before_request
+def before_request():
+    g.start_time = time.time()
+
+
+@app.after_request
+def after_request(response):
+    elapsed_time = round(time.time() - g.start_time, 2)
+    print("elapsed time:", elapsed_time, "s")
+    return response
+
 
 @app.route("/", defaults={"page": 1})
 @app.route("/<int:page>")
@@ -44,7 +71,9 @@ def index(page):
     place_classes = {}
     for place in all_places:
         rows = places.get_classes(place["id"])
-        place_classes[place["id"]] = [f"{row['title']}: {row['value']}" for row in rows]
+        place_classes[place["id"]] = [
+            f"{row['title']}: {row['value']}"
+            for row in rows]
 
     return render_template(
         "index.html",
@@ -53,6 +82,7 @@ def index(page):
         places=all_places,
         query=query,
         place_classes=place_classes)
+
 
 @app.route("/user/<username>")
 @app.route("/user/<username>/<int:page>")
@@ -76,7 +106,9 @@ def show_user(username, page=1):
     place_classes = {}
     for place in user_places:
         rows = places.get_classes(place["id"])
-        place_classes[place["id"]] = [f"{row['title']}: {row['value']}" for row in rows]
+        place_classes[place["id"]] = [
+            f"{row['title']}: {row['value']}"
+            for row in rows]
 
     return render_template(
         "show_user.html",
@@ -88,12 +120,6 @@ def show_user(username, page=1):
         place_classes=place_classes,
         total_comments=total_comments)
 
-
-@app.template_filter()
-def show_lines(content):
-    content = str(markupsafe.escape(content))
-    content = content.replace("\n", "<br />")
-    return markupsafe.Markup(content)
 
 @app.route("/place/<int:place_id>/<int:page>")
 @app.route("/place/<int:place_id>", defaults={"page": 1})
@@ -111,9 +137,9 @@ def show_place(place_id, page):
     page_count = max(page_count, 1)
 
     if page < 1:
-        return redirect("/place/"+ str(place_id) + "/1")
+        return redirect("/place/" + str(place_id) + "/1")
     if page > page_count:
-        return redirect("/place/"+ str(place_id) + "/" + str(page_count))
+        return redirect("/place/" + str(place_id) + "/" + str(page_count))
 
     comments = places.get_comments(place_id, page, page_size)
 
@@ -125,6 +151,7 @@ def show_place(place_id, page):
         images=images,
         page=page,
         page_count=page_count)
+
 
 @app.route("/image/<int:image_id>")
 def show_image(image_id):
@@ -148,7 +175,6 @@ def new_place():
         classes=classes)
 
 
-
 @app.route("/create_comment", methods=["POST"])
 def create_comment():
     require_login()
@@ -168,8 +194,9 @@ def create_comment():
     if not user:
         abort(403)
 
-    places.add_comment(comment, user["id"], place_id)  
+    places.add_comment(comment, user["id"], place_id)
     return redirect("/place/" + str(place_id))
+
 
 @app.route("/create_place", methods=["POST"])
 def create_place():
@@ -194,6 +221,7 @@ def create_place():
             classes.append((class_title, class_value))
     places.add_place(title, description, username, classes)
     return redirect("/")
+
 
 @app.route("/update_place", methods=["POST"])
 def update_place():
@@ -241,8 +269,9 @@ def edit_place(place_id):
     return render_template(
         "edit_place.html",
         place=place,
-        classes=classes, 
+        classes=classes,
         all_classes=all_classes)
+
 
 @app.route("/images/<int:place_id>")
 def edit_images(place_id):
@@ -256,7 +285,8 @@ def edit_images(place_id):
     return render_template(
         "images.html",
         place=place,
-        images=images)        
+        images=images)
+
 
 @app.route("/add_image", methods=["POST"])
 def add_image():
@@ -283,9 +313,9 @@ def add_image():
     if len(image) > 100 * 1024:
         flash("VIRHE: Kuva on liian suuri (max 100 kt)")
         return redirect("/images/" + str(place_id))
-
     places.add_image(place_id, image)
     return redirect("/images/" + str(place_id))
+
 
 @app.route("/remove_images", methods=["POST"])
 def remove_images():
@@ -303,12 +333,15 @@ def remove_images():
 
     return redirect("/images/" + str(place_id))
 
+
 @app.route("/remove_place/<int:place_id>", methods=["GET", "POST"])
 def remove_place(place_id):
+
     require_login()
     place = places.get_place(place_id)
     if place is None:
         abort(404)
+
     if place["username"] != session["username"]:
         return redirect("/")
     else:
@@ -316,28 +349,30 @@ def remove_place(place_id):
             return render_template(
                 "remove_place.html",
                 place=place)
+
         if request.method == "POST":
             check_csrf()
             if "remove" in request.form:
                 places.remove_place(place_id)
                 return redirect("/")
-            else:
-                return redirect("/place/" + str(place_id)) 
+            return redirect("/place/" + str(place_id))
+
 
 @app.route("/register")
 def register():
     return render_template("register.html")
 
-@app.route("/create", methods=["POST"])
 
+@app.route("/create", methods=["POST"])
 def create():
     username = request.form.get("username", "").strip()
     password1 = request.form.get("password1", "").strip()
     password2 = request.form.get("password2", "").strip()
+
     if not username:
         flash("VIRHE: Käyttäjätunnus ei voi olla tyhjä")
         return render_template("register.html", username=username)
-    
+
     if len(username) > 20:
         flash("VIRHE: Käyttäjätunnus on liian pitkä (max 20 merkkiä)")
         return render_template("register.html")
@@ -355,26 +390,29 @@ def create():
     except sqlite3.IntegrityError:
         flash("VIRHE: tunnus on jo varattu")
         return render_template("register.html", username=username)
-
     flash("Käyttäjä luotu! Kirjaudu sisään.")
     return redirect("/login")
+
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "GET":
         return render_template("login.html")
+
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+
         user_id = users.check_login(username, password)
         if user_id:
             session["user_id"] = user_id
             session["username"] = username
             session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
-        else:
-            flash("VIRHE: väärä tunnus tai salasana")
-            return redirect("/login")
+        flash("VIRHE: väärä tunnus tai salasana")
+        return redirect("/login")
+
+
 @app.route("/logout")
 def logout():
     session.clear()
