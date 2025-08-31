@@ -14,7 +14,7 @@
     <img src="/image/{{ image.id }}" alt="Kuva ilmoituksesta" width="100" />
     {% endfor %}
     <br />
-    <input type="hidden" name="item_id" value="{{ item.id }}" />
+    <input type="hidden" name="place_id" value="{{ place.id }}" />
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Poista valitut kuvat" />
 </form>
@@ -23,13 +23,13 @@
         <h3><label for="image">Lisää kuva:</label><br /></h3>
         <input type="file" id="image" name="image" accept=".png" />
 
-    <input type="hidden" name="item_id" value="{{ item.id }}" />
+    <input type="hidden" name="place_id" value="{{ place.id }}" />
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Lähetä" />
     </p>
     </form>
 
 <p>
-    <a href="/item/{{ item.id }}">Takaisin ilmoitukseen</a>
+    <a href="/place/{{ place.id }}">Takaisin ilmoitukseen</a>
 </p>
 {% endblock %}

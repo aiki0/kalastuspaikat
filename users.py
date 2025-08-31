@@ -10,23 +10,23 @@ def get_user(username):
         return {"id": user_id, "username": username}
     return None
 
-def get_items(username, page=1, page_size=10):
+def get_places(username, page=1, page_size=10):
     offset = (page - 1) * page_size
     sql = """
-        SELECT items.*
-        FROM items
-        JOIN users ON items.user_id = users.id
+        SELECT places.*
+        FROM places
+        JOIN users ON places.user_id = users.id
         WHERE users.username = ?
-        ORDER BY items.id DESC
+        ORDER BY places.id DESC
         LIMIT ? OFFSET ?
     """
     return db.query(sql, [username, page_size, offset])
 
-def item_count(username):
+def place_count(username):
     sql = """
         SELECT COUNT(*) AS count
-        FROM items
-        JOIN users ON items.user_id = users.id
+        FROM places
+        JOIN users ON places.user_id = users.id
         WHERE users.username = ?
     """
     result = db.query(sql, [username])

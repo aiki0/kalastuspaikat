@@ -4,16 +4,16 @@ CREATE TABLE users (
     password_hash TEXT
 );
 
-CREATE TABLE items (
+CREATE TABLE places (
     id INTEGER PRIMARY KEY,
     title TEXT,
     description TEXT,
     user_id INTEGER REFERENCES users(id)
 );
 
-CREATE TABLE item_classes (
+CREATE TABLE place_classes (
     id INTEGER PRIMARY KEY,
-    item_id INTEGER REFERENCES items(id),
+    place_id INTEGER REFERENCES places(id),
     title TEXT,
     value TEXT
 );
@@ -26,16 +26,16 @@ CREATE TABLE classes (
 
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
-    item_id INTEGER REFERENCES items(id),
+    place_id INTEGER REFERENCES places(id),
     user_id INTEGER REFERENCES users(id),
     comment TEXT
 );
 
 CREATE TABLE images (
     id INTEGER PRIMARY KEY,
-    item_id INTEGER REFERENCES items(id),
+    place_id INTEGER REFERENCES places(id),
     image BLOB
 );
 
 
-CREATE INDEX idx_item_comments ON comments (item_id);
+CREATE INDEX idx_place_comments ON comments (place_id);

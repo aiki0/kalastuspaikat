@@ -1,19 +1,19 @@
 {% extends "layout.html" %}
 
-{% block title %}{{  item.title  }}{% endblock %}
+{% block title %}{{  place.title  }}{% endblock %}
 
 {% block content %}
 
-    {% if session.username == item.username %}
+    {% if session.username == place.username %}
     <p>
-        <a href="/edit_item/{{ item.id }}">Muokkaa</a> |
-        <a href="/remove_item/{{ item.id }}">Poista</a> |
-        <a href="/images/{{ item.id }}">Kuvat</a>
+        <a href="/edit_place/{{ place.id }}">Muokkaa</a> |
+        <a href="/remove_place/{{ place.id }}">Poista</a> |
+        <a href="/images/{{ place.id }}">Kuvat</a>
     </p>
     {% endif %}
-    <h1>{{ item.title }}</h1>
+    <h1>{{ place.title }}</h1>
 
-    <p class="item-description">{{ item.description | show_lines }}</p>
+    <p class="place-description">{{ place.description | show_lines }}</p>
     {% if classes %}
     <p>
         {% for class in classes%}
@@ -21,7 +21,7 @@
         {% endfor %}
     {% endif %}  
         
-    <li>Ilmoittaja: <a href="/user/{{ item.username }}">{{ item.username }}</a></li> 
+    <li>Ilmoittaja: <a href="/user/{{ place.username }}">{{ place.username }}</a></li> 
     </p>
     {% for image in images %}
     <img src="/image/{{ image.id }}" alt="Kuva ilmoituksesta" width="150" />
@@ -29,11 +29,11 @@
     {% if comments %}
     <h3>Kommentti sivu: 
         {% if page > 1 %}
-        <a href="{{ url_for('show_item', item_id=item.id, page=page-1) }}">&lt;</a>
+        <a href="{{ url_for('show_place', place_id=place.id, page=page-1) }}">&lt;</a>
         {% endif %}
         {{ page }} / {{ page_count }}
         {% if page < page_count %}
-        <a href="{{ url_for('show_item', item_id=item.id, page=page+1) }}">&gt;</a>
+        <a href="{{ url_for('show_place', place_id=place.id, page=page+1) }}">&gt;</a>
         {% endif %}
     </h3>
     {% endif %}
@@ -46,7 +46,7 @@
     <form action="/create_comment" method="post">
         <label for="comment">Kommentoi: max 100 merkkiä</label><br>
         <textarea name="comment" id="comment" maxlength="100" rows="3" cols="30" required placeholder="Lisää kommentti:"></textarea><br>
-        <input type="hidden" name="item_id" value="{{ item.id }}" />
+        <input type="hidden" name="place_id" value="{{ place.id }}" />
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
         <input type="submit" value="Lisää kommentti" />
     </form>

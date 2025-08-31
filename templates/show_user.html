@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1>Käyttäjä: {{ user.username }}</h1>
-    Käyttäjällä {{ user.username }} on {{ total_items }} ilmoitusta.
+    Käyttäjällä {{ user.username }} on {{ total_places }} ilmoitusta.
 
     <h2>Käyttäjän ilmoitukset</h2>
 
@@ -18,7 +18,7 @@
         {% endif %}
     </p>
 
-    {% for item in items %}
-        <li><a href="/item/{{ item.id }}">{{ item.title }}</a></li>
+    {% for place in places %}
+        <li><a href="/place/{{ place.id }}">{{ place.title }}</a></li>
     {% endfor %}
 {% endblock %}

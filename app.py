@@ -3,7 +3,7 @@ from flask import Flask
 import math
 from flask import abort, redirect, render_template, request, session, make_response, flash
 import config
-import items
+import places
 import users
 import markupsafe
 import secrets
@@ -28,13 +28,13 @@ def index(page):
     query = request.args.get("query", default="", type=str)
 
     if query:
-        item_count = items.count_items(query)
-        all_items = items.find_items(query, page, page_size)
+        place_count = places.count_places(query)
+        all_places = places.find_places(query, page, page_size)
     else:
-        item_count = items.item_count()
-        all_items = items.get_items(page, page_size)
+        place_count = places.place_count()
+        all_places = places.get_places(page, page_size)
 
-    page_count = max(math.ceil(item_count / page_size), 1)
+    page_count = max(math.ceil(place_count / page_size), 1)
 
     if page < 1:
         return redirect("/1?query=" + query)
@@ -45,7 +45,7 @@ def index(page):
         "index.html",
         page=page,
         page_count=page_count,
-        items=all_items,
+        places=all_places,
         query=query)
 
 @app.route("/user/<username>")
@@ -56,9 +56,9 @@ def show_user(username, page=1):
         abort(404)
 
     page_size = 10
-    total_items = users.item_count(username)
-    item_count = users.item_count(username)
-    page_count = math.ceil(item_count / page_size)
+    total_places = users.place_count(username)
+    place_count = users.place_count(username)
+    page_count = math.ceil(place_count / page_size)
     page_count = max(page_count, 1)
 
     if page < 1:
@@ -66,14 +66,14 @@ def show_user(username, page=1):
     if page > page_count:
         return redirect(f"/user/{username}/{page_count}")
 
-    user_items = users.get_items(username, page, page_size)
+    user_places = users.get_places(username, page, page_size)
     return render_template(
         "show_user.html",
         user=user,
-        items=user_items,
+        places=user_places,
         page=page,
         page_count=page_count,
-        total_items=total_items,)
+        total_places=total_places,)
 
 @app.template_filter()
 def show_lines(content):
@@ -81,31 +81,31 @@ def show_lines(content):
     content = content.replace("\n", "<br />")
     return markupsafe.Markup(content)
 
-@app.route("/item/<int:item_id>/<int:page>")
-@app.route("/item/<int:item_id>", defaults={"page": 1})
-def show_item(item_id, page):
-    item = items.get_item(item_id)
-    if item is None:
+@app.route("/place/<int:place_id>/<int:page>")
+@app.route("/place/<int:place_id>", defaults={"page": 1})
+def show_place(place_id, page):
+    place = places.get_place(place_id)
+    if place is None:
         abort(404)
 
-    classes = items.get_classes(item_id)
-    images = items.get_images(item_id)
+    classes = places.get_classes(place_id)
+    images = places.get_images(place_id)
 
     page_size = 6
-    comment_count = items.comment_count(item_id)
+    comment_count = places.comment_count(place_id)
     page_count = math.ceil(comment_count / page_size)
     page_count = max(page_count, 1)
 
     if page < 1:
-        return redirect("/item/"+ str(item_id) + "/1")
+        return redirect("/place/"+ str(place_id) + "/1")
     if page > page_count:
-        return redirect("/item/"+ str(item_id) + "/" + str(page_count))
+        return redirect("/place/"+ str(place_id) + "/" + str(page_count))
 
-    comments = items.get_comments(item_id, page, page_size)
+    comments = places.get_comments(place_id, page, page_size)
 
     return render_template(
-        "show_item.html",
-        item=item,
+        "show_place.html",
+        place=place,
         classes=classes,
         comments=comments,
         images=images,
@@ -114,7 +114,7 @@ def show_item(item_id, page):
 
 @app.route("/image/<int:image_id>")
 def show_image(image_id):
-    image = items.get_image(image_id)
+    image = places.get_image(image_id)
     if not image:
         abort(404)
 
@@ -123,14 +123,14 @@ def show_image(image_id):
     return response
 
 
-@app.route("/new_item")
-def new_item():
+@app.route("/new_place")
+def new_place():
     if "username" not in session:
         return redirect("/login")
     require_login()
-    classes = items.get_all_classes()
+    classes = places.get_all_classes()
     return render_template(
-        "new_item.html",
+        "new_place.html",
         classes=classes)
 
 
@@ -144,9 +144,9 @@ def create_comment():
     if not comment or len(comment) > 101:
         abort(403)
 
-    item_id = request.form["item_id"]
-    item = items.get_item(item_id)
-    if not item:
+    place_id = request.form["place_id"]
+    place = places.get_place(place_id)
+    if not place:
         abort(403)
 
     username = session["username"]
@@ -154,11 +154,11 @@ def create_comment():
     if not user:
         abort(403)
 
-    items.add_comment(comment, user["id"], item_id)  
-    return redirect("/item/" + str(item_id))
+    places.add_comment(comment, user["id"], place_id)  
+    return redirect("/place/" + str(place_id))
 
-@app.route("/create_item", methods=["POST"])
-def create_item():
+@app.route("/create_place", methods=["POST"])
+def create_place():
     require_login()
     check_csrf()
     title = request.form["title"]
@@ -168,7 +168,7 @@ def create_item():
     if not description or len(description) > 1000:
         abort(403)
     username = session["username"]
-    all_classes = items.get_all_classes()
+    all_classes = places.get_all_classes()
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
@@ -178,18 +178,18 @@ def create_item():
             if class_value not in all_classes[class_title]:
                 abort(403)
             classes.append((class_title, class_value))
-    items.add_item(title, description, username, classes)
+    places.add_place(title, description, username, classes)
     return redirect("/")
 
-@app.route("/update_item", methods=["POST"])
-def update_item():
+@app.route("/update_place", methods=["POST"])
+def update_place():
     require_login()
     check_csrf()
-    item_id = request.form["item_id"]
-    item = items.get_item(item_id)
-    if item is None:
+    place_id = request.form["place_id"]
+    place = places.get_place(place_id)
+    if place is None:
         abort(404)
-    if item["username"] != session["username"]:
+    if place["username"] != session["username"]:
         abort(403)
     title = request.form["title"]
     description = request.form["description"]
@@ -202,19 +202,19 @@ def update_item():
         if entry:
             key, value = entry.split(":", 1)
             classes.append((key.strip(), value.strip()))
-    items.update_item(item_id, title, description, classes)
-    return redirect("/item/" + item_id)
+    places.update_place(place_id, title, description, classes)
+    return redirect("/place/" + place_id)
 
 
-@app.route("/edit_item/<int:item_id>")
-def edit_item(item_id):
+@app.route("/edit_place/<int:place_id>")
+def edit_place(place_id):
     require_login()
-    item = items.get_item(item_id)
-    if item is None:
+    place = places.get_place(place_id)
+    if place is None:
         abort(404)
-    if item["username"] != session["username"]:
+    if place["username"] != session["username"]:
         return redirect("/")
-    all_classes = items.get_all_classes()
+    all_classes = places.get_all_classes()
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
@@ -225,37 +225,37 @@ def edit_item(item_id):
                 abort(403)
             classes.append((class_title, class_value))
     return render_template(
-        "edit_item.html",
-        item=item,
+        "edit_place.html",
+        place=place,
         classes=classes, 
         all_classes=all_classes)
 
-@app.route("/images/<int:item_id>")
-def edit_images(item_id):
+@app.route("/images/<int:place_id>")
+def edit_images(place_id):
     require_login()
-    item = items.get_item(item_id)
-    if item is None:
+    place = places.get_place(place_id)
+    if place is None:
         abort(404)
-    if item["username"] != session["username"]:
+    if place["username"] != session["username"]:
         abort(403)
-    images = items.get_images(item_id)
+    images = places.get_images(place_id)
     return render_template(
         "images.html",
-        item=item,
+        place=place,
         images=images)        
 
 @app.route("/add_image", methods=["POST"])
 def add_image():
     require_login()
     check_csrf()
-    item_id = request.form["item_id"]
-    item = items.get_item(item_id)
-    if item is None:
+    place_id = request.form["place_id"]
+    place = places.get_place(place_id)
+    if place is None:
         abort(404)
-    if item["username"] != session["username"]:
+    if place["username"] != session["username"]:
         abort(403)
 
-    all_images = items.get_images(item_id)
+    all_images = places.get_images(place_id)
     if len(all_images) >= 3:
         return "VIRHE: liian monta kuvaa (max 3)"
 
@@ -267,45 +267,45 @@ def add_image():
     if len(image) > 100 * 1024:
         return "VIRHE: liian suuri kuva"
 
-    items.add_image(item_id, image)
-    return redirect("/images/" + str(item_id))
+    places.add_image(place_id, image)
+    return redirect("/images/" + str(place_id))
 
 @app.route("/remove_images", methods=["POST"])
 def remove_images():
     require_login()
     check_csrf()
-    item_id = request.form["item_id"]
-    item = items.get_item(item_id)
-    if item is None:
+    place_id = request.form["place_id"]
+    place = places.get_place(place_id)
+    if place is None:
         abort(404)
-    if item["username"] != session["username"]:
+    if place["username"] != session["username"]:
         abort(403)
 
     for image_id in request.form.getlist("image_id"):
-        items.remove_image(image_id, item_id)
+        places.remove_image(image_id, place_id)
 
-    return redirect("/images/" + str(item_id))
+    return redirect("/images/" + str(place_id))
 
-@app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
-def remove_item(item_id):
+@app.route("/remove_place/<int:place_id>", methods=["GET", "POST"])
+def remove_place(place_id):
     require_login()
-    item = items.get_item(item_id)
-    if item is None:
+    place = places.get_place(place_id)
+    if place is None:
         abort(404)
-    if item["username"] != session["username"]:
+    if place["username"] != session["username"]:
         return redirect("/")
     else:
         if request.method == "GET":
             return render_template(
-                "remove_item.html",
-                item=item)
+                "remove_place.html",
+                place=place)
         if request.method == "POST":
             check_csrf()
             if "remove" in request.form:
-                items.remove_item(item_id)
+                places.remove_place(place_id)
                 return redirect("/")
             else:
-                return redirect("/item/" + str(item_id)) 
+                return redirect("/place/" + str(place_id)) 
 
 @app.route("/register")
 def register():

@@ -4,19 +4,19 @@
 
 {% block content %}
 <h2>Ilmoituksen muokkaus</h2>
-<form action="/update_item" method="post">
+<form action="/update_place" method="post">
   {% if error %}
   <p style="color: red;">{{ error }}</p>
   {% endif %}
   <p>
     <label for="title">Otsikko:</label><br />
-    <input type="text" name="title" id="title" maxlength="45" value="{{ item.title }}" required />
+    <input type="text" name="title" id="title" maxlength="45" value="{{ place.title }}" required />
   </p>
   <p>
     <label for="description">Kuvaus:</label><br />
-    <textarea id="description" rows="8" cols="40" name="description" maxlength="1000" required>{{ item.description }}</textarea>
+    <textarea id="description" rows="8" cols="40" name="description" maxlength="1000" required>{{ place.description }}</textarea>
   </p>
-  <input type="hidden" name="item_id" value="{{ item.id }}" />
+  <input type="hidden" name="place_id" value="{{ place.id }}" />
   {% for class in all_classes %}
   <p>
     <label for="class{{ class }}">{{ class }}:</label><br />

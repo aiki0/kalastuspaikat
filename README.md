@@ -29,5 +29,5 @@ Tietomäärät : Käyttäjiä tuhat, miljoona paikkaa ja kymmenen miljoonaa vies
 
 Ennen indeksointia ilmoituksen sivulle paikan sivulle menossa kesti 0.5s-0.6s
 Syynä oli kaikkien kommenttien haku sillä lisäämällä:
-CREATE INDEX idx_item_comments ON comments (item_id);
+CREATE INDEX idx_place_comments ON comments (place_id);
 Sivulle meno kestää vain 0.01s vaikka pyytää isolla id-numerolla olevaa paikkaa
