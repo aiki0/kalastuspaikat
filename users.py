@@ -39,8 +39,7 @@ def place_count(username):
         SELECT COUNT(*) AS count
         FROM places
         JOIN users ON places.user_id = users.id
-        WHERE users.username = ?
-    """
+        WHERE users.username = ?"""
     result = db.query(sql, [username])
     return result[0]["count"] if result else 0
 

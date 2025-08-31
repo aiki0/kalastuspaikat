@@ -154,8 +154,7 @@ def count_places(query):
         WHERE places.title LIKE ?
            OR places.description LIKE ?
            OR place_classes.title LIKE ?
-           OR place_classes.value LIKE ?
-    """
+           OR place_classes.value LIKE ?"""
     like = "%" + query + "%"
     rows = db.query(sql, [like, like, like, like])
     return rows[0]["count"] if rows else 0

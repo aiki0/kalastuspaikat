@@ -102,7 +102,6 @@ def show_user(username, page=1):
         return redirect(f"/user/{username}/{page_count}")
 
     user_places = users.get_places(username, page, page_size)
-
     place_classes = {}
     for place in user_places:
         rows = places.get_classes(place["id"])
@@ -158,7 +157,6 @@ def show_image(image_id):
     image = places.get_image(image_id)
     if not image:
         abort(404)
-
     response = make_response(bytes(image))
     response.headers.set("Content-Type", "image/png")
     return response
